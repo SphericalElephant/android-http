@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlSerializer;
 
+import at.diamonddogs.data.adapter.WebRequestAdapter;
 import at.diamonddogs.data.dataobjects.SoapRequest;
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.data.dataobjects.WebRequest.Type;
@@ -33,13 +34,13 @@ import at.diamonddogs.data.dataobjects.WebRequest.Type;
 /**
  * 
  */
-public class SoapRequestAdapter {
+public class SoapRequestAdapter implements WebRequestAdapter<SoapRequest> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(SoapRequestAdapter.class);
 	private static final String USERAGENT = "android-http";
 
 	private String xmlVersionTag = "";
-	private SoapRequest request;
+	private final SoapRequest request;
 
 	/**
 	 * Default constructor
@@ -108,6 +109,7 @@ public class SoapRequestAdapter {
 	 * 
 	 * @return a {@link SoapRequest}
 	 */
+	@Override
 	public SoapRequest getRequest() {
 		return request;
 	}
