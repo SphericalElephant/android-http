@@ -21,6 +21,10 @@ import org.apache.http.entity.StringEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+/**
+ * A specialized form of {@link StringEntity} that takes care of JSON writing
+ * for you.
+ */
 public class JSONHttpEntity extends StringEntity {
 
 	public JSONHttpEntity(JSONObject input) throws UnsupportedEncodingException {

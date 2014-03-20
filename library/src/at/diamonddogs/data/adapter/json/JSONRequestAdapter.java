@@ -24,6 +24,10 @@ import at.diamonddogs.data.adapter.WebRequestAdapter;
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.http.entity.JSONHttpEntity;
 
+/**
+ * Wraps a usual {@link WebRequest} with the required data to send a JSON
+ * {@link WebRequest}.
+ */
 public class JSONRequestAdapter implements WebRequestAdapter<WebRequest> {
 	private final WebRequest webRequest;
 
@@ -39,6 +43,9 @@ public class JSONRequestAdapter implements WebRequestAdapter<WebRequest> {
 		this.webRequest.addHeaderField("Content-Type", "application/json");
 	}
 
+	/**
+	 * Obtain the JSONized {@link WebRequest}
+	 */
 	@Override
 	public WebRequest getRequest() {
 		return webRequest;

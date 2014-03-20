@@ -36,6 +36,7 @@ import org.apache.http.client.RedirectHandler;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
+import org.apache.http.client.methods.HttpPatch;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -153,29 +154,24 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 			requestBase = new HttpHead(webRequest.getUrl().toURI());
 		} else if (requestType == Type.POST) {
 			HttpPost post = new HttpPost(webRequest.getUrl().toURI());
-
-			// we need to remove the content length header, to prevent
-			// httpClient.execute(...) from failing
-			if (webRequest.getHeader() != null) {
-				webRequest.removeHeaderField("Content-Length");
-			}
-
-			attachHttpEntity(post);
-
-			requestBase = post;
+			attachData(post);
 		} else if (requestType == Type.PUT) {
 			HttpPut put = new HttpPut(webRequest.getUrl().toURI());
-
-			// we need to remove the content length header, to prevent
-			// httpClient.execute(...) from failing
-			if (webRequest.getHeader() != null) {
-				webRequest.removeHeaderField("Content-Length");
-			}
-
-			attachHttpEntity(put);
-
-			requestBase = put;
+			attachData(put);
+		} else if (requestType == Type.PATCH) {
+			HttpPatch patch = new HttpPatch(webRequest.getUrl().toURI());
+			attachData(patch);
 		}
+	}
+
+	private void attachData(HttpEntityEnclosingRequestBase enclosingRequestBase) throws Throwable {
+		// we need to remove the content length header, to prevent
+		// httpClient.execute(...) from failing
+		if (webRequest.getHeader() != null) {
+			webRequest.removeHeaderField("Content-Length");
+		}
+		attachHttpEntity(enclosingRequestBase);
+		requestBase = enclosingRequestBase;
 	}
 
 	private void attachHttpEntity(HttpEntityEnclosingRequestBase enclosingRequestBase) throws Throwable {

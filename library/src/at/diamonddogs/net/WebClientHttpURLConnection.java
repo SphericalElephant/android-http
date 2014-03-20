@@ -155,6 +155,10 @@ public class WebClientHttpURLConnection extends WebClient {
 			connection.setRequestMethod("PUT");
 			connection.setDoOutput(true);
 			break;
+		case PATCH:
+			connection.setRequestMethod("PATCH");
+			connection.setDoOutput(true);
+			break;
 		case GET:
 			connection.setRequestMethod("GET");
 			break;

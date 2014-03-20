@@ -70,6 +70,8 @@ public class WebRequest implements Request {
 		GET,
 		/** Put Request */
 		PUT,
+		/** Patch Request */
+		PATCH,
 		/** Head Request */
 		HEAD
 	}
