@@ -17,6 +17,7 @@ package at.diamonddogs.data.adapter.json;
 
 import java.io.UnsupportedEncodingException;
 
+import org.apache.http.entity.StringEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -40,6 +41,12 @@ public class JSONRequestAdapter<T> implements WebRequestAdapter<WebRequest> {
 	public JSONRequestAdapter(WebRequest webRequest, JSONArray input) throws UnsupportedEncodingException {
 		this.webRequest = webRequest;
 		this.webRequest.setHttpEntity(new JSONHttpEntity(input));
+		this.webRequest.addHeaderField("Content-Type", "application/json");
+	}
+
+	public JSONRequestAdapter(WebRequest webRequest, String input) throws UnsupportedEncodingException {
+		this.webRequest = webRequest;
+		this.webRequest.setHttpEntity(new StringEntity(input));
 		this.webRequest.addHeaderField("Content-Type", "application/json");
 	}
 
