@@ -159,6 +159,10 @@ public class WebClientHttpURLConnection extends WebClient {
 			connection.setRequestMethod("PATCH");
 			connection.setDoOutput(true);
 			break;
+		case DELETE:
+			connection.setRequestMethod("PATCH");
+			connection.setDoOutput(true);
+			break;
 		case GET:
 			connection.setRequestMethod("GET");
 			break;

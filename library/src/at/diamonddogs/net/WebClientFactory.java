@@ -60,9 +60,9 @@ public class WebClientFactory {
 	 */
 	public WebClient getNetworkClient(WebRequest webRequest, Context context) {
 		WebClient client = null;
-		if (isPatchWithData(webRequest) || isPutWithData(webRequest) || isPostWithData(webRequest)) {
+		if (isPatchWithData(webRequest) || isPutWithData(webRequest) || isPostWithData(webRequest) || isDeleteWithData(webRequest)) {
 			LOGGER
-				.info("!!!WARNING!!! FORCE USING WebClientDefaultHttpClient DUE TO BUGGY IMPLEMENTATION OF HttpUrlConnection (POST / PUT / PATCH DATA WOULD OTHERWISE BE CUT OFF)!!!");
+				.info("!!!WARNING!!! FORCE USING WebClientDefaultHttpClient DUE TO BUGGY IMPLEMENTATION OF HttpUrlConnection (POST / PUT / PATCH / DELETE DATA WOULD OTHERWISE BE CUT OFF)!!!");
 			client = new WebClientDefaultHttpClient(context);
 		} else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
 			LOGGER.debug("Using WebClientHttpURLConnection, since SDK bigger than Froyo: " + Build.VERSION.SDK_INT);
@@ -105,5 +105,16 @@ public class WebClientFactory {
 	 */
 	public boolean isPatchWithData(WebRequest wr) {
 		return wr.getRequestType() == Type.PATCH && wr.getHttpEntity() != null;
+	}
+
+	/**
+	 * Checks if the {@link WebRequest} has delete data
+	 * 
+	 * @param wr
+	 *            the {@link WebRequest} to check
+	 * @return true or false, depending on the presence of post data
+	 */
+	public boolean isDeleteWithData(WebRequest wr) {
+		return wr.getRequestType() == Type.DELETE && wr.getHttpEntity() != null;
 	}
 }

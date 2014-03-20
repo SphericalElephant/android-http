@@ -33,6 +33,7 @@ import org.apache.http.HttpVersion;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.RedirectHandler;
+import org.apache.http.client.methods.HttpDeleteWithEntity;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
@@ -161,6 +162,9 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 		} else if (requestType == Type.PATCH) {
 			HttpPatch patch = new HttpPatch(webRequest.getUrl().toURI());
 			attachData(patch);
+		} else if (requestType == Type.DELETE) {
+			HttpDeleteWithEntity delete = new HttpDeleteWithEntity(webRequest.getUrl().toURI());
+			attachData(delete);
 		}
 	}
 

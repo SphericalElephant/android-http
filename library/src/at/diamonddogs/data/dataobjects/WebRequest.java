@@ -72,6 +72,8 @@ public class WebRequest implements Request {
 		PUT,
 		/** Patch Request */
 		PATCH,
+		/** Delete Request */
+		DELETE,
 		/** Head Request */
 		HEAD
 	}
