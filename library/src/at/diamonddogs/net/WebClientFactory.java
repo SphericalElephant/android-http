@@ -60,10 +60,15 @@ public class WebClientFactory {
 	 */
 	public WebClient getNetworkClient(WebRequest webRequest, Context context) {
 		WebClient client = null;
-		// HttpUrlConnection, that should be used starting from FROYO, cuts off
-		// POST data ... we need to force the obsolete client implementation!!!
-		if (isPostWithData(webRequest)) {
-			LOGGER.info("!!!WARNING!!! FORCE USING WebClientDefaultHttpClient DUE TO BUGGY IMPLEMENTATION OF HttpUrlConnection (POST DATA WOULD OTHERWISE BE CUT OFF)!!!");
+		if (isPutWithData(webRequest)) {
+			LOGGER
+				.info("!!!WARNING!!! FORCE USING WebClientDefaultHttpClient DUE TO BUGGY IMPLEMENTATION OF HttpUrlConnection (PUT DATA WOULD OTHERWISE BE CUT OFF)!!!");
+			client = new WebClientDefaultHttpClient(context);
+		} else if (isPostWithData(webRequest)) {
+			// HttpUrlConnection, that should be used starting from FROYO, cuts off 
+			// POST data ... we need to force the obsolete client implementation!!!
+			LOGGER
+				.info("!!!WARNING!!! FORCE USING WebClientDefaultHttpClient DUE TO BUGGY IMPLEMENTATION OF HttpUrlConnection (POST DATA WOULD OTHERWISE BE CUT OFF)!!!");
 			client = new WebClientDefaultHttpClient(context);
 		} else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
 			LOGGER.debug("Using WebClientHttpURLConnection, since SDK bigger than Froyo: " + Build.VERSION.SDK_INT);
@@ -84,5 +89,16 @@ public class WebClientFactory {
 	 */
 	public boolean isPostWithData(WebRequest wr) {
 		return wr.getRequestType() == Type.POST && wr.getHttpEntity() != null;
+	}
+
+	/**
+	 * Checks if the {@link WebRequest} has put data
+	 * 
+	 * @param wr
+	 *            the {@link WebRequest} to check
+	 * @return true or false, depending on the presence of post data
+	 */
+	public boolean isPutWithData(WebRequest wr) {
+		return wr.getRequestType() == Type.PUT && wr.getHttpEntity() != null;
 	}
 }

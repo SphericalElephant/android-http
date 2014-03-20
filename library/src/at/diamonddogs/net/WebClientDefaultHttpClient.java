@@ -33,9 +33,11 @@ import org.apache.http.HttpVersion;
 import org.apache.http.NoHttpResponseException;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.RedirectHandler;
+import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpHead;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.params.HttpClientParams;
 import org.apache.http.conn.ClientConnectionManager;
@@ -120,23 +122,7 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 				throw new WebClientException("WebRequest must not be null!");
 			}
 
-			if (webRequest.getRequestType() == Type.GET) {
-				requestBase = new HttpGet(webRequest.getUrl().toURI());
-			} else if (webRequest.getRequestType() == Type.HEAD) {
-				requestBase = new HttpHead(webRequest.getUrl().toURI());
-			} else if (webRequest.getRequestType() == Type.POST) {
-				HttpPost post = new HttpPost(webRequest.getUrl().toURI());
-
-				// we need to remove the content length header, to prevent
-				// httpClient.execute(...) from failing
-				if (webRequest.getHeader() != null) {
-					webRequest.removeHeaderField("Content-Length");
-				}
-
-				handlePostParameters(post);
-
-				requestBase = post;
-			}
+			setUpRequestBaseAccordingToRequestType();
 
 			configureConnection();
 
@@ -150,7 +136,7 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 			// cacheObjectToFile
 			listenerReply = createListenerReply(webRequest, null, tr, Status.FAILED);
 			LOGGER.info("Error running webrequest: " + webRequest.getUrl() + " status: "
-					+ (response == null ? "" : response.getStatusLine().getStatusCode()), tr);
+				+ (response == null ? "" : response.getStatusLine().getStatusCode()), tr);
 		}
 		if (webClientReplyListener != null) {
 			webClientReplyListener.onWebReply(this, listenerReply);
@@ -158,11 +144,45 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 		return listenerReply;
 	}
 
-	private void handlePostParameters(HttpPost post) throws Throwable {
+	private void setUpRequestBaseAccordingToRequestType() throws Throwable {
+		Type requestType = webRequest.getRequestType();
+
+		if (requestType == Type.GET) {
+			requestBase = new HttpGet(webRequest.getUrl().toURI());
+		} else if (requestType == Type.HEAD) {
+			requestBase = new HttpHead(webRequest.getUrl().toURI());
+		} else if (requestType == Type.POST) {
+			HttpPost post = new HttpPost(webRequest.getUrl().toURI());
+
+			// we need to remove the content length header, to prevent
+			// httpClient.execute(...) from failing
+			if (webRequest.getHeader() != null) {
+				webRequest.removeHeaderField("Content-Length");
+			}
+
+			attachHttpEntity(post);
+
+			requestBase = post;
+		} else if (requestType == Type.PUT) {
+			HttpPut put = new HttpPut(webRequest.getUrl().toURI());
+
+			// we need to remove the content length header, to prevent
+			// httpClient.execute(...) from failing
+			if (webRequest.getHeader() != null) {
+				webRequest.removeHeaderField("Content-Length");
+			}
+
+			attachHttpEntity(put);
+
+			requestBase = put;
+		}
+	}
+
+	private void attachHttpEntity(HttpEntityEnclosingRequestBase enclosingRequestBase) throws Throwable {
 		HttpEntity entity = webRequest.getHttpEntity();
 
 		if (entity != null) {
-			post.setEntity(entity);
+			enclosingRequestBase.setEntity(entity);
 		}
 	}
 
@@ -240,7 +260,7 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 	@Override
 	public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
 		LOGGER.error("executionCount:" + executionCount + " NumberOfRetries: " + webRequest.getNumberOfRetries() + " exception: "
-				+ exception.toString());
+			+ exception.toString());
 		if (executionCount >= webRequest.getNumberOfRetries()) {
 			return false;
 		}
