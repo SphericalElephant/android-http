@@ -172,7 +172,7 @@ public class HttpService extends Service implements WebClientReplyListener {
 	 * @return a {@link WebRequestReturnContainer}
 	 */
 	public WebRequestReturnContainer runWebRequest(final Handler handler, final WebRequest webRequest,
-			final DownloadProgressListener progressListener) {
+		final DownloadProgressListener progressListener) {
 		WebRequestReturnContainer ret = new WebRequestReturnContainer();
 		if (webRequest == null) {
 			throw new IllegalArgumentException("webRequest may not be null");
@@ -200,7 +200,7 @@ public class HttpService extends Service implements WebClientReplyListener {
 				throw new ServiceException("processor id == -1 looks like you forgot to set a Processor ID for the WebRequest");
 			}
 			throw new ServiceException("No processor with id '" + id + "' has been registered! WebRequest originally created: ",
-					webRequest.getOrigin());
+				webRequest.getOrigin());
 		}
 		addRequestToHandlerMap(handler, webRequest);
 		Runnable r = new Runnable() {
@@ -554,7 +554,7 @@ public class HttpService extends Service implements WebClientReplyListener {
 		if (isProcessorRegistered(processorId)) {
 			if (registeredProcessors.get(processorId).getClass() != processor.getClass()) {
 				throw new ProcessorExeception("Processor id collision, processorids for " + processor + " and "
-						+ registeredProcessors.get(processorId) + " are identical!");
+					+ registeredProcessors.get(processorId) + " are identical!");
 			} else {
 				throw new ProcessorExeception("A processor known by id " + processorId + " has already been registered.");
 			}
@@ -607,8 +607,8 @@ public class HttpService extends Service implements WebClientReplyListener {
 		WebReply repl = (WebReply) reply.getReply();
 		Throwable t = reply.getThrowable();
 		if (reply.getStatus() == Status.OK) {
-			LOGGER.debug("onWebReply: " + reply.getStatus() + "httpStatus: " + repl.getHttpStatusCode() + " from: "
-					+ reply.getRequest().getUrl());
+			LOGGER.debug("onWebReply: " + reply.getStatus() + " httpStatus: " + repl.getHttpStatusCode() + " from: "
+				+ reply.getRequest().getUrl());
 		} else {
 			LOGGER.debug("onWebReply: " + reply.getStatus() + " from: " + reply.getRequest().getUrl(), t);
 		}
@@ -721,8 +721,8 @@ public class HttpService extends Service implements WebClientReplyListener {
 	}
 
 	private static final class WebRequestFutureContainer {
-		private WebRequest webRequest;
-		private Future<?> future;
+		private final WebRequest webRequest;
+		private final Future<?> future;
 
 		private WebRequestFutureContainer(WebRequest webRequest, Future<?> future) {
 			this.webRequest = webRequest;
