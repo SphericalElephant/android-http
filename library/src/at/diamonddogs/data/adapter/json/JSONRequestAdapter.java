@@ -28,7 +28,7 @@ import at.diamonddogs.http.entity.JSONHttpEntity;
  * Wraps a usual {@link WebRequest} with the required data to send a JSON
  * {@link WebRequest}.
  */
-public class JSONRequestAdapter implements WebRequestAdapter<WebRequest> {
+public class JSONRequestAdapter<T> implements WebRequestAdapter<WebRequest> {
 	private final WebRequest webRequest;
 
 	public JSONRequestAdapter(WebRequest webRequest, JSONObject input) throws UnsupportedEncodingException {
