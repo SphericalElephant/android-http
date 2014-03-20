@@ -17,20 +17,20 @@ package org.apache.http.client.methods;
 
 import java.net.URI;
 
-public class HttpDelete extends HttpEntityEnclosingRequestBase {
+public class HttpDeleteWithEntity extends HttpEntityEnclosingRequestBase {
 
 	public final static String METHOD_NAME = "DELETE";
 
-	public HttpDelete() {
+	public HttpDeleteWithEntity() {
 		super();
 	}
 
-	public HttpDelete(final URI uri) {
+	public HttpDeleteWithEntity(final URI uri) {
 		super();
 		setURI(uri);
 	}
 
-	public HttpDelete(final String uri) {
+	public HttpDeleteWithEntity(final String uri) {
 		super();
 		setURI(URI.create(uri));
 	}
