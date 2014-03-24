@@ -17,7 +17,6 @@ package at.diamonddogs.data.adapter.json;
 
 import java.io.UnsupportedEncodingException;
 
-import org.apache.http.entity.StringEntity;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -29,25 +28,25 @@ import at.diamonddogs.http.entity.JSONHttpEntity;
  * Wraps a usual {@link WebRequest} with the required data to send a JSON
  * {@link WebRequest}.
  */
-public class JSONRequestAdapter<T> implements WebRequestAdapter<WebRequest> {
+public class JSONRequestAdapter implements WebRequestAdapter<WebRequest> {
 	private final WebRequest webRequest;
 
 	public JSONRequestAdapter(WebRequest webRequest, JSONObject input) throws UnsupportedEncodingException {
 		this.webRequest = webRequest;
-		this.webRequest.setHttpEntity(new JSONHttpEntity(input));
-		this.webRequest.addHeaderField("Content-Type", "application/json");
+		JSONHttpEntity e = new JSONHttpEntity(input);
+		this.webRequest.setHttpEntity(e);
 	}
 
 	public JSONRequestAdapter(WebRequest webRequest, JSONArray input) throws UnsupportedEncodingException {
 		this.webRequest = webRequest;
-		this.webRequest.setHttpEntity(new JSONHttpEntity(input));
-		this.webRequest.addHeaderField("Content-Type", "application/json");
+		JSONHttpEntity e = new JSONHttpEntity(input);
+		this.webRequest.setHttpEntity(e);
 	}
 
 	public JSONRequestAdapter(WebRequest webRequest, String input) throws UnsupportedEncodingException {
 		this.webRequest = webRequest;
-		this.webRequest.setHttpEntity(new StringEntity(input));
-		this.webRequest.addHeaderField("Content-Type", "application/json");
+		JSONHttpEntity e = new JSONHttpEntity(input);
+		this.webRequest.setHttpEntity(e);
 	}
 
 	/**

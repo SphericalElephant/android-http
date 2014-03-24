@@ -29,18 +29,22 @@ public class JSONHttpEntity extends StringEntity {
 
 	public JSONHttpEntity(JSONObject input) throws UnsupportedEncodingException {
 		this(input.toString());
+		setContentType("application/json");
 	}
 
 	public JSONHttpEntity(JSONArray input) throws UnsupportedEncodingException {
 		super(input.toString());
+		setContentType("application/json");
+	}
+
+	public JSONHttpEntity(String s) throws UnsupportedEncodingException {
+		super(s);
+		setContentType("application/json");
 	}
 
 	private JSONHttpEntity(String s, String charset) throws UnsupportedEncodingException {
 		super(s, charset);
-	}
-
-	private JSONHttpEntity(String s) throws UnsupportedEncodingException {
-		super(s);
+		setContentType("application/json");
 	}
 
 }
