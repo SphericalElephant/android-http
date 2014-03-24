@@ -156,7 +156,7 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 
 					if (!md5.equalsIgnoreCase(tmp.getChecksum())) {
 						throw new IOException("Error while downloading File.\nOriginal Checksum: " + tmp.getChecksum() + "\nChecksum: "
-								+ md5);
+							+ md5);
 					}
 				}
 			}
@@ -191,8 +191,8 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 				toRead = new GZIPInputStream(i);
 			} catch (Throwable tr) {
 				LOGGER.warn(
-						"Problem with GZIP reply, using normal input stream! This issue can be caused by an empty body (i.e. HEAD request)",
-						tr);
+					"Problem with GZIP reply, using normal input stream! This issue can be caused by an empty body (i.e. HEAD request)",
+					tr);
 				toRead = i;
 			}
 		} else {
@@ -257,7 +257,7 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 	protected WebReply handleResponseNotOk(InputStream i, int statusCode, Map<String, List<String>> replyHeader) {
 		WebReply reply = new WebReply();
 		reply.setHttpStatusCode(statusCode);
-
+		reply.setReplyHeader(replyHeader);
 		if (i == null) {
 			reply.setData(null);
 		} else {
