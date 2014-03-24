@@ -323,7 +323,9 @@ public abstract class ServiceProcessor<OUTPUT> {
 		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest((WebRequest) replyAdapter.getRequest()));
 		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REPLY, new ParcelableAdapterWebReply((WebReply) replyAdapter.getReply()));
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, false);
-		b.putInt(BUNDLE_EXTRA_MESSAGE_HTTPSTATUSCODE, ((WebReply) replyAdapter.getReply()).getHttpStatusCode());
+		if (replyAdapter.getReply() != null) {
+			b.putInt(BUNDLE_EXTRA_MESSAGE_HTTPSTATUSCODE, ((WebReply) replyAdapter.getReply()).getHttpStatusCode());
+		}
 		m.setData(b);
 		return m;
 	}
@@ -346,7 +348,9 @@ public abstract class ServiceProcessor<OUTPUT> {
 		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest((WebRequest) replyAdapter.getRequest()));
 		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REPLY, new ParcelableAdapterWebReply((WebReply) replyAdapter.getReply()));
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, false);
-		b.putInt(BUNDLE_EXTRA_MESSAGE_HTTPSTATUSCODE, ((WebReply) replyAdapter.getReply()).getHttpStatusCode());
+		if (replyAdapter.getReply() != null) {
+			b.putInt(BUNDLE_EXTRA_MESSAGE_HTTPSTATUSCODE, ((WebReply) replyAdapter.getReply()).getHttpStatusCode());
+		}
 		m.setData(b);
 		return m;
 	}
