@@ -156,11 +156,12 @@ public class WebClientHttpURLConnection extends WebClient {
 			connection.setDoOutput(true);
 			break;
 		case PATCH:
+			// TODO: patch is not supported by HttpUrlConnection!
 			connection.setRequestMethod("PATCH");
 			connection.setDoOutput(true);
 			break;
 		case DELETE:
-			connection.setRequestMethod("PATCH");
+			connection.setRequestMethod("DELETE");
 			connection.setDoOutput(true);
 			break;
 		case GET:
