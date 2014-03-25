@@ -162,7 +162,6 @@ public class WebClientHttpURLConnection extends WebClient {
 			break;
 		case DELETE:
 			connection.setRequestMethod("DELETE");
-			connection.setDoOutput(true);
 			break;
 		case GET:
 			connection.setRequestMethod("GET");
