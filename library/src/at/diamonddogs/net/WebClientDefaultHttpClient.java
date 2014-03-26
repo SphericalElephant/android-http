@@ -31,6 +31,8 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.HttpVersion;
 import org.apache.http.NoHttpResponseException;
+import org.apache.http.auth.AuthenticationException;
+import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.HttpRequestRetryHandler;
 import org.apache.http.client.RedirectHandler;
 import org.apache.http.client.methods.HttpDeleteWithEntity;
@@ -49,6 +51,7 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
 import org.apache.http.params.BasicHttpParams;
@@ -63,6 +66,7 @@ import org.slf4j.LoggerFactory;
 import android.content.Context;
 import at.diamonddogs.data.adapter.ReplyAdapter;
 import at.diamonddogs.data.adapter.ReplyAdapter.Status;
+import at.diamonddogs.data.dataobjects.Authentication;
 import at.diamonddogs.data.dataobjects.WebReply;
 import at.diamonddogs.data.dataobjects.WebRequest.Type;
 import at.diamonddogs.exception.WebClientException;
@@ -115,6 +119,7 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 
 	@Override
 	public ReplyAdapter call() {
+
 		ReplyAdapter listenerReply = null;
 		HttpResponse response = null;
 		try {
@@ -125,6 +130,7 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 			}
 
 			setUpRequestBaseAccordingToRequestType();
+			setAuthenticationParameters();
 
 			configureConnection();
 
@@ -144,6 +150,23 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 			webClientReplyListener.onWebReply(this, listenerReply);
 		}
 		return listenerReply;
+	}
+
+	private void setAuthenticationParameters() throws AuthenticationException {
+
+		Authentication auth = webRequest.getAuthentication();
+		if (webRequest.getAuthentication() != null) {
+			LOGGER.info("Attaching auth info: " + auth);
+			// @formatter:off
+			requestBase.addHeader(new BasicScheme().authenticate(
+					new UsernamePasswordCredentials(
+						auth.getUser(),
+						auth.getPassword()
+					),
+					requestBase
+				)
+			);
+		}
 	}
 
 	private void setUpRequestBaseAccordingToRequestType() throws Throwable {

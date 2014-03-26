@@ -30,8 +30,10 @@ import org.slf4j.LoggerFactory;
 import android.content.Context;
 import at.diamonddogs.data.adapter.ReplyAdapter;
 import at.diamonddogs.data.adapter.ReplyAdapter.Status;
+import at.diamonddogs.data.dataobjects.Authentication;
 import at.diamonddogs.data.dataobjects.WebReply;
 import at.diamonddogs.exception.WebClientException;
+import at.diamonddogs.util.Utils;
 
 /**
  * This {@link WebClient} will be used on Gingerbread and above. Please do not
@@ -143,6 +145,7 @@ public class WebClientHttpURLConnection extends WebClient {
 
 		setRequestType();
 		buildHeader();
+		setAuthHeader();
 	}
 
 	private void setRequestType() throws ProtocolException {
@@ -183,6 +186,14 @@ public class WebClientHttpURLConnection extends WebClient {
 					connection.setRequestProperty(field, header.get(field));
 				}
 			}
+		}
+	}
+
+	private void setAuthHeader() {
+		Authentication auth = webRequest.getAuthentication();
+		if (auth == null) {
+			String cred = Utils.encrypt(auth.getUser() + ":" + auth.getPassword());
+			connection.setRequestProperty("Authorization", "Basic " + cred);
 		}
 	}
 
