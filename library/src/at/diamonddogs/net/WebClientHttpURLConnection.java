@@ -191,7 +191,7 @@ public class WebClientHttpURLConnection extends WebClient {
 
 	private void setAuthHeader() {
 		Authentication auth = webRequest.getAuthentication();
-		if (auth == null) {
+		if (auth != null) {
 			String cred = Utils.encrypt(auth.getUser() + ":" + auth.getPassword());
 			connection.setRequestProperty("Authorization", "Basic " + cred);
 		}
