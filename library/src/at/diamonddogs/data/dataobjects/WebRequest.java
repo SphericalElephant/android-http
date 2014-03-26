@@ -179,6 +179,12 @@ public class WebRequest implements Request {
 	 */
 	protected boolean checkConnectivityPing = false;
 
+	/**
+	 * Holds the http authentication information, if left null, no
+	 * authentication will be send.
+	 */
+	protected Authentication authentication = null;
+
 	@SuppressWarnings("javadoc")
 	public boolean isCancelled() {
 		return isCancelled;
@@ -419,6 +425,16 @@ public class WebRequest implements Request {
 	@Override
 	public String toString() {
 		return url == null ? "" : url.toString();
+	}
+
+	@SuppressWarnings("javadoc")
+	public Authentication getAuthentication() {
+		return authentication;
+	}
+
+	@SuppressWarnings("javadoc")
+	public void setAuthentication(Authentication authentication) {
+		this.authentication = authentication;
 	}
 
 }
