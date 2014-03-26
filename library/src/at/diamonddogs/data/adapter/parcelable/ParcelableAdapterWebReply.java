@@ -23,7 +23,11 @@ import at.diamonddogs.data.dataobjects.WebReply;
  * Use this {@link ParcelableAdapter} to parcel {@link WebReply}s
  * 
  * TODO: check if all data is parcelled!
+ * 
+ * @deprecated use normal serizalization instead! This file will not be updated
+ *             any more!
  */
+@Deprecated
 public class ParcelableAdapterWebReply extends ParcelableAdapter<WebReply> {
 	/**
 	 * Required by Parcelable mechanism

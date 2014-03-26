@@ -21,7 +21,11 @@ import at.diamonddogs.data.dataobjects.TempFile;
 
 /**
  * Use this {@link ParcelableAdapter} to parcel {@link TempFile}s
+ * 
+ * @deprecated use normal serizalization instead! This file will not be updated
+ *             any more!
  */
+@Deprecated
 public class ParcelableAdapterTempFile extends ParcelableAdapter<TempFile> {
 
 	/**
@@ -71,10 +75,12 @@ public class ParcelableAdapterTempFile extends ParcelableAdapter<TempFile> {
 	 * Required by Parcelable mechanism
 	 */
 	public static final Parcelable.Creator<ParcelableAdapterTempFile> CREATOR = new Parcelable.Creator<ParcelableAdapterTempFile>() {
+		@Override
 		public ParcelableAdapterTempFile createFromParcel(Parcel in) {
 			return new ParcelableAdapterTempFile(in);
 		}
 
+		@Override
 		public ParcelableAdapterTempFile[] newArray(int size) {
 			return new ParcelableAdapterTempFile[size];
 		}
