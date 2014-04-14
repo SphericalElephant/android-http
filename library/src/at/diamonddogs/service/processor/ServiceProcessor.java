@@ -319,7 +319,7 @@ public abstract class ServiceProcessor<OUTPUT> {
 		m.what = getProcessorID();
 		m.arg1 = RETURN_MESSAGE_FAIL;
 		Bundle b = new Bundle(1);
-		b.putSerializable(BUNDLE_EXTRA_MESSAGE_THROWABLE, tr);
+		b.putSerializable(BUNDLE_EXTRA_MESSAGE_THROWABLE, tr == null ? new Throwable("Unknown Error") : tr);
 		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest((WebRequest) replyAdapter.getRequest()));
 		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REPLY, new ParcelableAdapterWebReply((WebReply) replyAdapter.getReply()));
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, false);
@@ -344,7 +344,8 @@ public abstract class ServiceProcessor<OUTPUT> {
 		m.what = getProcessorID();
 		m.arg1 = RETURN_MESSAGE_FAIL;
 		Bundle b = new Bundle(1);
-		b.putSerializable(BUNDLE_EXTRA_MESSAGE_THROWABLE, new Throwable());
+		b.putSerializable(BUNDLE_EXTRA_MESSAGE_THROWABLE, replyAdapter.getThrowable() == null ? new Throwable("Unknown error")
+			: replyAdapter.getThrowable());
 		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest((WebRequest) replyAdapter.getRequest()));
 		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REPLY, new ParcelableAdapterWebReply((WebReply) replyAdapter.getReply()));
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, false);
@@ -391,7 +392,7 @@ public abstract class ServiceProcessor<OUTPUT> {
 		m.what = getProcessorID();
 		m.arg1 = RETURN_MESSAGE_FAIL;
 		Bundle b = new Bundle(1);
-		b.putSerializable(BUNDLE_EXTRA_MESSAGE_THROWABLE, new Throwable());
+		b.putSerializable(BUNDLE_EXTRA_MESSAGE_THROWABLE, new Throwable("Unknown error"));
 		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest(webRequest));
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, true);
 		m.setData(b);
