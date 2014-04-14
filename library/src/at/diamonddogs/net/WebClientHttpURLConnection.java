@@ -164,6 +164,7 @@ public class WebClientHttpURLConnection extends WebClient {
 			connection.setDoOutput(true);
 			break;
 		case DELETE:
+			// TODO: does not support setDoOutput(true)
 			connection.setRequestMethod("DELETE");
 			break;
 		case GET:

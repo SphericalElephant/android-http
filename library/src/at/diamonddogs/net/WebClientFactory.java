@@ -60,7 +60,8 @@ public class WebClientFactory {
 	 */
 	public WebClient getNetworkClient(WebRequest webRequest, Context context) {
 		WebClient client = null;
-		if (isPatchWithData(webRequest) || isPutWithData(webRequest) || isPostWithData(webRequest) || isDeleteWithData(webRequest)) {
+		if (isPatch(webRequest) || isPatchWithData(webRequest) || isPutWithData(webRequest) || isPostWithData(webRequest)
+			|| isDeleteWithData(webRequest)) {
 			LOGGER
 				.info("!!!WARNING!!! FORCE USING WebClientDefaultHttpClient DUE TO BUGGY IMPLEMENTATION OF HttpUrlConnection (POST / PUT / PATCH / DELETE DATA WOULD OTHERWISE BE CUT OFF)!!!");
 			client = new WebClientDefaultHttpClient(context);
@@ -75,22 +76,22 @@ public class WebClientFactory {
 	}
 
 	/**
-	 * Checks if the {@link WebRequest} has post data
+	 * Checks if the {@link WebRequest} has POST data
 	 * 
 	 * @param wr
 	 *            the {@link WebRequest} to check
-	 * @return true or false, depending on the presence of post data
+	 * @return true or false, depending on the presence of POST data
 	 */
 	public boolean isPostWithData(WebRequest wr) {
 		return wr.getRequestType() == Type.POST && wr.getHttpEntity() != null;
 	}
 
 	/**
-	 * Checks if the {@link WebRequest} has put data
+	 * Checks if the {@link WebRequest} has PUT data
 	 * 
 	 * @param wr
 	 *            the {@link WebRequest} to check
-	 * @return true or false, depending on the presence of post data
+	 * @return true or false, depending on the presence of PUT data
 	 */
 	public boolean isPutWithData(WebRequest wr) {
 		return wr.getRequestType() == Type.PUT && wr.getHttpEntity() != null;
@@ -101,18 +102,29 @@ public class WebClientFactory {
 	 * 
 	 * @param wr
 	 *            the {@link WebRequest} to check
-	 * @return true or false, depending on the presence of post data
+	 * @return true or false, depending on the presence of PATCH data
 	 */
 	public boolean isPatchWithData(WebRequest wr) {
 		return wr.getRequestType() == Type.PATCH && wr.getHttpEntity() != null;
 	}
 
 	/**
-	 * Checks if the {@link WebRequest} has delete data
+	 * Checks if the {@link WebRequest} is a PATCH request
 	 * 
 	 * @param wr
 	 *            the {@link WebRequest} to check
-	 * @return true or false, depending on the presence of post data
+	 * @return true or false, depending on the presence of PATCH
+	 */
+	public boolean isPatch(WebRequest wr) {
+		return wr.getRequestType() == Type.PATCH;
+	}
+
+	/**
+	 * Checks if the {@link WebRequest} has DELETE data
+	 * 
+	 * @param wr
+	 *            the {@link WebRequest} to check
+	 * @return true or false, depending on the presence of DELETE data
 	 */
 	public boolean isDeleteWithData(WebRequest wr) {
 		return wr.getRequestType() == Type.DELETE && wr.getHttpEntity() != null;
