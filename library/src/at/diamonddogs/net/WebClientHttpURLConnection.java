@@ -221,7 +221,12 @@ public class WebClientHttpURLConnection extends WebClient {
 		default:
 			LOGGER.debug("WebRequest DEFAULT: " + webRequest + " status code: " + statusCode);
 			if (connection != null) {
-				reply = handleResponseNotOk(connection.getInputStream(), statusCode, connection.getHeaderFields());
+				try {
+					reply = handleResponseNotOk(connection.getInputStream(), statusCode, connection.getHeaderFields());
+				} catch (Throwable tr) {
+					LOGGER.debug("Error reading input stream, trying error stream!");
+					reply = handleResponseNotOk(connection.getErrorStream(), statusCode, connection.getHeaderFields());
+				}
 			} else {
 				reply = handleResponseNotOk(null, statusCode, connection.getHeaderFields());
 			}
