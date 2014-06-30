@@ -62,7 +62,7 @@ public class ImageProcessor extends DataProcessor<Bitmap, Bitmap> {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(ImageProcessor.class);
 
-	private BitmapFactory.Options bitmapOptions;
+	private final BitmapFactory.Options bitmapOptions;
 
 	/**
 	 * Default constructor using default {@link BitmapFactory.Options}
@@ -282,10 +282,11 @@ public class ImageProcessor extends DataProcessor<Bitmap, Bitmap> {
 	 */
 	public static class ImageProcessHandler extends Handler {
 		protected ImageView imageView;
-		private String url;
-		private Animation fadeInAnimation;
+		private final String url;
+		private final Animation fadeInAnimation;
 		private boolean useDrawingCache = false;
 		private int defaultImage = -1;
+		private Handler.Callback callback;
 
 		/**
 		 * Constructor
@@ -324,6 +325,21 @@ public class ImageProcessor extends DataProcessor<Bitmap, Bitmap> {
 		 *            an optional {@link Animation}
 		 */
 		public ImageProcessHandler(ImageView imageView, URL url, Animation fadeInAnimation) {
+			this(imageView, url.toString(), fadeInAnimation, -1);
+		}
+
+		/**
+		 * Convenience constructor for {@link URL} url types
+		 * 
+		 * @param imageView
+		 *            the {@link ImageView} the image should be displayed on
+		 * @param url
+		 *            the of the image, will be set as {@link ImageView} tag in
+		 *            order to identify the correct {@link ImageView}
+		 * @param fadeInAnimation
+		 *            an optional {@link Animation}
+		 */
+		public ImageProcessHandler(ImageView imageView, String url, Animation fadeInAnimation) {
 			this(imageView, url.toString(), fadeInAnimation, -1);
 		}
 
@@ -403,6 +419,19 @@ public class ImageProcessor extends DataProcessor<Bitmap, Bitmap> {
 		}
 
 		/**
+		 * Sets the {@link Callback}
+		 * 
+		 * @param callback
+		 *            a {@link Callback}, if provided, the callback will be
+		 *            notified before any action is taken by this handler.
+		 *            Returning false from the handler will abort the standard
+		 *            image handling behaviour provided by this handler.
+		 */
+		public void setCallback(Handler.Callback callback) {
+			this.callback = callback;
+		}
+
+		/**
 		 * Enables the drawing cache of the {@link ImageView}
 		 */
 		public void enableDrawingCache() {
@@ -425,6 +454,11 @@ public class ImageProcessor extends DataProcessor<Bitmap, Bitmap> {
 
 		@Override
 		public void handleMessage(Message msg) {
+			if (callback != null) {
+				if (!callback.handleMessage(msg)) {
+					return;
+				}
+			}
 			if (msg.arg1 == ServiceProcessor.RETURN_MESSAGE_OK) {
 
 				if (imageView == null || imageView.getTag() == null) {
