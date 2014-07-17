@@ -19,6 +19,7 @@ import java.net.URI;
 import java.net.URL;
 
 import android.net.Uri;
+import at.diamonddogs.data.dataobjects.Authentication;
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.data.dataobjects.WebRequest.Type;
 import at.diamonddogs.service.processor.ServiceProcessor;
@@ -34,7 +35,7 @@ public class WebRequestBuilder {
 	/**
 	 * The configuration used for {@link WebRequest} construction
 	 */
-	private WebRequestBuilderConfiguration configuration;
+	private final WebRequestBuilderConfiguration configuration;
 
 	/**
 	 * The {@link WebRequest} that is currently build
@@ -97,6 +98,9 @@ public class WebRequestBuilder {
 	 * @return the {@link WebRequestBuilder} instance (allows chaining)
 	 */
 	public WebRequestBuilder newWebRequest() {
+		if (webRequest != null) {
+			throw new IllegalStateException("webRequest already initialized");
+		}
 		webRequest = new WebRequest();
 		webRequest.setFollowRedirects(configuration.isFollowRedirectEnabled());
 		webRequest.setUseOfflineCache(configuration.isOfflineCachingEnabled());
@@ -105,6 +109,21 @@ public class WebRequestBuilder {
 		webRequest.setRetryInterval(configuration.getRetryInterval());
 		webRequest.setNumberOfRetries(configuration.getRetryCount());
 		webRequest.setCacheTime(configuration.getDefaultCacheTime());
+		return this;
+	}
+
+	/**
+	 * Attaches basic auth data to a {@link WebRequest}
+	 * 
+	 * @param user
+	 *            the user
+	 * @param password
+	 *            the password
+	 * @return the {@link WebRequestBuilder} instance (allows chaining)
+	 */
+	public WebRequestBuilder attachBasicAuthData(String user, String password) {
+		throwOnError();
+		webRequest.setAuthentication(new Authentication(user, password));
 		return this;
 	}
 
@@ -259,13 +278,16 @@ public class WebRequestBuilder {
 	}
 
 	/**
-	 * Returns the {@link WebRequest} that has been constructed so far
+	 * Returns the {@link WebRequest} that has been constructed so far and
+	 * resets the {@link WebRequest}
 	 * 
 	 * @return a {@link WebRequest}
 	 */
 	public WebRequest getWebRequest() {
 		throwOnError();
-		return webRequest;
+		WebRequest ret = webRequest;
+		ret = null;
+		return ret;
 	}
 
 	private void throwOnError() {
