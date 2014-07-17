@@ -286,7 +286,7 @@ public class WebRequestBuilder {
 	public WebRequest getWebRequest() {
 		throwOnError();
 		WebRequest ret = webRequest;
-		ret = null;
+		webRequest = null;
 		return ret;
 	}
 
