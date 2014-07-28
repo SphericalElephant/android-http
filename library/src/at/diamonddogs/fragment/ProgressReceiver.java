@@ -18,6 +18,7 @@ package at.diamonddogs.fragment;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Handler;
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.service.net.WebRequestMap;
 
@@ -27,16 +28,36 @@ import at.diamonddogs.service.net.WebRequestMap;
  */
 public class ProgressReceiver extends BroadcastReceiver {
 	private IndeterminateProgressControl indeterminateProgressControl;
+	private Handler handler;
+
+	public ProgressReceiver(IndeterminateProgressControl indeterminateProgressControl) {
+		super();
+		this.handler = new Handler();
+		this.indeterminateProgressControl = indeterminateProgressControl;
+	}
 
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		int activeWebRequests = intent.getIntExtra(WebRequestMap.INTENT_EXTRA_WEBREQUEST_COUNT, -1);
 		if (activeWebRequests > 0) {
-			if (!indeterminateProgressControl.isIndeterminateProgressShowing()) {
-				indeterminateProgressControl.showIndeterminateProgress();
-			}
+			handler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					if (!indeterminateProgressControl.isIndeterminateProgressShowing()) {
+						indeterminateProgressControl.showIndeterminateProgress();
+					}
+				}
+			});
+
 		} else {
-			indeterminateProgressControl.hideIndeterminateProgress();
+			handler.post(new Runnable() {
+
+				@Override
+				public void run() {
+					indeterminateProgressControl.hideIndeterminateProgress();
+				}
+			});
 		}
 	}
 
