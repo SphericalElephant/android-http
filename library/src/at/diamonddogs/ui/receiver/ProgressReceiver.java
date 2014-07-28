@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package at.diamonddogs.fragment;
+package at.diamonddogs.ui.receiver;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +80,21 @@ public class ProgressReceiver extends BroadcastReceiver {
 		public void showIndeterminateProgress();
 
 		/**
+		 * Disable all ui elements the user should not be able to press while
+		 * {@link WebRequest}s are in progress here
+		 */
+		public void disableUiElements();
+
+		/**
 		 * Hides the indeterminate progress
 		 */
 		public void hideIndeterminateProgress();
+
+		/**
+		 * Reenable all ui elements that have been blocked due to pending
+		 * {@link WebRequest}s here
+		 */
+		public void enableUiElements();
 
 		/**
 		 * Returns the current state of indeterminate progress

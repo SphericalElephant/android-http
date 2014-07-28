@@ -1,4 +1,4 @@
-package at.diamonddogs.fragment;
+package at.diamonddogs.ui.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
