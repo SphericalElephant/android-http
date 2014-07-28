@@ -1,5 +1,6 @@
 /*
- * Copyright (C) 2012, 2013 the diamond:dogs|group
+ * Copyright (C) 2012, 2013, 2014 the diamond:dogs|group
+ * Copyright (C) 2014 Spherical Elephant GmbH
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
