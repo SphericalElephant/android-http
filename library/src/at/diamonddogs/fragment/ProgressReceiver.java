@@ -15,6 +15,9 @@
  */
 package at.diamonddogs.fragment;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -27,6 +30,7 @@ import at.diamonddogs.service.net.WebRequestMap;
  * indeterminate progress for {@link WebRequest}s
  */
 public class ProgressReceiver extends BroadcastReceiver {
+	private static final Logger LOGGER = LoggerFactory.getLogger(ProgressReceiver.class.getSimpleName());
 	private IndeterminateProgressControl indeterminateProgressControl;
 	private Handler handler;
 
@@ -39,11 +43,14 @@ public class ProgressReceiver extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		int activeWebRequests = intent.getIntExtra(WebRequestMap.INTENT_EXTRA_WEBREQUEST_COUNT, -1);
+		LOGGER.info("Active Request: " + activeWebRequests);
+
 		if (activeWebRequests > 0) {
 			handler.post(new Runnable() {
 
 				@Override
 				public void run() {
+					LOGGER.info("Attempting to show progress");
 					if (!indeterminateProgressControl.isIndeterminateProgressShowing()) {
 						indeterminateProgressControl.showIndeterminateProgress();
 					}
@@ -55,6 +62,7 @@ public class ProgressReceiver extends BroadcastReceiver {
 
 				@Override
 				public void run() {
+					LOGGER.info("Attempting to hide progress");
 					indeterminateProgressControl.hideIndeterminateProgress();
 				}
 			});

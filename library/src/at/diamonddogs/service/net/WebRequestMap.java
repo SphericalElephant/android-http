@@ -19,6 +19,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -32,6 +35,7 @@ import at.diamonddogs.data.dataobjects.WebRequestFutureContainer;
  * {@link WebRequest} are added or removed.
  */
 public class WebRequestMap {
+	private static final Logger LOGGER = LoggerFactory.getLogger(WebRequestMap.class.getSimpleName());
 	/**
 	 * The action that is used to sinal {@link BroadcastReceiver}s every time a
 	 * {@link WebRequest} has been started or finished
@@ -89,8 +93,9 @@ public class WebRequestMap {
 	 * @see HashMap#put(Object, Object)
 	 */
 	public WebRequestFutureContainer put(String key, WebRequestFutureContainer value) {
+		WebRequestFutureContainer ret = webRequests.put(key, value);
 		sendActiveWebRequestsIntent();
-		return webRequests.put(key, value);
+		return ret;
 	}
 
 	/**
@@ -101,8 +106,9 @@ public class WebRequestMap {
 	 * @see HashMap#put(Object, Object)
 	 */
 	public WebRequestFutureContainer remove(String key) {
+		WebRequestFutureContainer ret = webRequests.remove(key);
 		sendActiveWebRequestsIntent();
-		return webRequests.remove(key);
+		return ret;
 	}
 
 	/**
@@ -174,9 +180,10 @@ public class WebRequestMap {
 	}
 
 	private void sendActiveWebRequestsIntent() {
+		LOGGER.info("Sending Active Webrequests Broadcast: " + webRequests.size());
 		Intent i = new Intent(ACTION_ACTIVE_WEBREQUESTS);
 		i.putExtra(INTENT_EXTRA_WEBREQUEST_COUNT, webRequests.size());
-		LocalBroadcastManager.getInstance(context).sendBroadcastSync(i);
+		LocalBroadcastManager.getInstance(context).sendBroadcast(i);
 	}
 
 	public static final void registerBroadcastReceiver(Context c, BroadcastReceiver bcr) {
