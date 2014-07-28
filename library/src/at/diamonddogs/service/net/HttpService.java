@@ -41,6 +41,8 @@ import at.diamonddogs.data.adapter.ReplyAdapter.Status;
 import at.diamonddogs.data.dataobjects.Request;
 import at.diamonddogs.data.dataobjects.WebReply;
 import at.diamonddogs.data.dataobjects.WebRequest;
+import at.diamonddogs.data.dataobjects.WebRequestFutureContainer;
+import at.diamonddogs.data.dataobjects.WebRequestReturnContainer;
 import at.diamonddogs.exception.ProcessorExeception;
 import at.diamonddogs.exception.ServiceException;
 import at.diamonddogs.net.WebClient;
@@ -102,11 +104,6 @@ public class HttpService extends Service implements WebClientReplyListener {
 	private IBinder binder;
 
 	/**
-	 * A map storing {@link WebRequest}s
-	 */
-	private Map<String, WebRequestFutureContainer> webRequests;
-
-	/**
 	 * Connectivity interface
 	 */
 	private ConnectivityHelper connectivityHelper;
@@ -117,7 +114,6 @@ public class HttpService extends Service implements WebClientReplyListener {
 		workerQueue = new WorkerQueue(POOL_SIZE_CORE, POOL_SIZE_MAX, POOL_KEEPALIVE);
 		webRequestHandlerMap = Collections.synchronizedMap(new HashMap<Handler, List<WebRequest>>());
 		registeredProcessors = new SparseArray<ServiceProcessor<?>>();
-		webRequests = Collections.synchronizedMap(new HashMap<String, WebRequestFutureContainer>());
 		connectivityHelper = new ConnectivityHelper(this);
 	}
 
@@ -177,20 +173,20 @@ public class HttpService extends Service implements WebClientReplyListener {
 		if (webRequest == null) {
 			throw new IllegalArgumentException("webRequest may not be null");
 		}
-		ret.id = webRequest.getId();
-		ret.payload = null; // we have no payload at this point!
-		ret.successful = true;
+		ret.setId(webRequest.getId());
+		ret.setPayload(null); // we have no payload at this point!
+		ret.setSuccessful(true);
 		if (handler == null) {
 			throw new IllegalArgumentException("handler may not be null");
 		}
 		if (webRequest.getUrl() == null) {
 			LOGGER.warn("WebRequest URL was null, cannot run request");
-			ret.successful = false;
+			ret.setSuccessful(false);
 			return ret;
 		}
 		if (workerQueue.isShutDown()) {
 			LOGGER.info("service already shutdown, couldn't run: " + webRequest);
-			ret.successful = false;
+			ret.setSuccessful(false);
 			return ret;
 		}
 		ServiceProcessor<?> processor = registeredProcessors.get(webRequest.getProcessorId());
@@ -208,7 +204,7 @@ public class HttpService extends Service implements WebClientReplyListener {
 			public void run() {
 				Future<?> future = getWebRequestTask(webRequest, progressListener, true);
 				if (future != null) {
-					webRequests.put(webRequest.getId(), new WebRequestFutureContainer(webRequest, future));
+					WebRequestMap.getInstance(HttpService.this).put(webRequest.getId(), new WebRequestFutureContainer(webRequest, future));
 				}
 			}
 		};
@@ -313,36 +309,36 @@ public class HttpService extends Service implements WebClientReplyListener {
 	public WebRequestReturnContainer runSynchronousWebRequest(final WebRequest webRequest, final DownloadProgressListener progressListener) {
 		SynchronousProcessor<?> synchronousProcessor = (SynchronousProcessor<?>) registeredProcessors.get(webRequest.getProcessorId());
 		WebRequestReturnContainer ret = new WebRequestReturnContainer();
-		ret.id = webRequest.getId();
-		ret.successful = true;
+		ret.setId(webRequest.getId());
+		ret.setSuccessful(true);
 		try {
 			CacheManager cm = CacheManager.getInstance();
 			CachedObject cachedObject = cm.getFromCache(HttpService.this, webRequest);
 			if (!connectivityHelper.checkConnectivityWebRequest(webRequest)) {
 				if (cachedObject != null) {
-					ret.payload = synchronousProcessor.obtainDataObjectFromCachedObject(this, webRequest, cachedObject);
+					ret.setPayload(synchronousProcessor.obtainDataObjectFromCachedObject(this, webRequest, cachedObject));
 				} else {
-					ret.successful = false;
+					ret.setSuccessful(false);
 				}
 			} else {
 				if (cachedObject != null) {
-					ret.payload = synchronousProcessor.obtainDataObjectFromCachedObject(this, webRequest, cachedObject);
+					ret.setPayload(synchronousProcessor.obtainDataObjectFromCachedObject(this, webRequest, cachedObject));
 				} else {
 					ReplyAdapter replyAdapter = runSynchronousWebRequestFuture(webRequest, progressListener).get();
-					ret.payload = synchronousProcessor.obtainDataObjectFromWebReply(this, replyAdapter);
+					ret.setPayload(synchronousProcessor.obtainDataObjectFromWebReply(this, replyAdapter));
 
 					WebReply reply = (WebReply) replyAdapter.getReply();
-					ret.httpStatusCode = reply.getHttpStatusCode();
-					ret.replyHeader = reply.getReplyHeader();
+					ret.setHttpStatusCode(reply.getHttpStatusCode());
+					ret.setReplyHeader(reply.getReplyHeader());
 				}
 			}
 		} catch (InterruptedException ie) {
-			ret.successful = false;
-			ret.throwable = ie;
+			ret.setSuccessful(false);
+			ret.setThrowable(ie);
 			LOGGER.debug("WebRequest interrupted " + webRequest);
 		} catch (Throwable tr) {
-			ret.successful = false;
-			ret.throwable = tr;
+			ret.setSuccessful(false);
+			ret.setThrowable(tr);
 			LOGGER.warn("Error getting result for " + webRequest, tr);
 		}
 		return ret;
@@ -484,7 +480,7 @@ public class HttpService extends Service implements WebClientReplyListener {
 			try {
 				Future<ReplyAdapter> future = getWebRequestTask(webRequest, progressListener, false);
 				if (future != null) {
-					webRequests.put(webRequest.getId(), new WebRequestFutureContainer(webRequest, future));
+					WebRequestMap.getInstance(this).put(webRequest.getId(), new WebRequestFutureContainer(webRequest, future));
 					return future;
 				}
 			} catch (Throwable tr) {
@@ -599,7 +595,7 @@ public class HttpService extends Service implements WebClientReplyListener {
 	@Override
 	public void onWebReply(WebClient webClient, ReplyAdapter reply) {
 		logReply(reply);
-		webRequests.remove(webClient.getWebRequest().getId());
+		WebRequestMap.getInstance(this).remove(webClient.getWebRequest().getId());
 		dispatchWebReplyProcessor(reply, getHandler(reply.getRequest()));
 	}
 
@@ -666,13 +662,10 @@ public class HttpService extends Service implements WebClientReplyListener {
 	 */
 	public void cancelRequest(String id) {
 		LOGGER.debug("cancelRequest " + id);
-		if (webRequests.containsKey(id)) {
+		if (WebRequestMap.getInstance(this).hasWebRequestFutureContainerWithId(id)) {
 			LOGGER.debug("found cancelRequest " + id);
-			WebRequestFutureContainer container = webRequests.get(id);
-			boolean hasBeenCanceled = container.future.cancel(true);
+			boolean hasBeenCanceled = WebRequestMap.getInstance(this).cancelWebRequestFutureContainerById(id);
 			LOGGER.info("WebRequest with id " + id + " has been canceled " + hasBeenCanceled);
-			container.webRequest.setCancelled(true);
-			webRequests.remove(id);
 		}
 	}
 
@@ -720,121 +713,4 @@ public class HttpService extends Service implements WebClientReplyListener {
 		}
 	}
 
-	private static final class WebRequestFutureContainer {
-		private final WebRequest webRequest;
-		private final Future<?> future;
-
-		private WebRequestFutureContainer(WebRequest webRequest, Future<?> future) {
-			this.webRequest = webRequest;
-			this.future = future;
-		}
-	}
-
-	/**
-	 * A wrapper object wrapping the {@link WebRequest}s id, the payload (in
-	 * case of a synchronous {@link WebRequest}) and the state of the operation.
-	 * {@link WebRequestReturnContainer} must be returned by any public method,
-	 * capable of running {@link WebRequest}s.
-	 */
-	public static final class WebRequestReturnContainer {
-		/**
-		 * A flag indiciating the success of an operation
-		 */
-		private boolean successful;
-
-		/**
-		 * The id of the {@link WebRequest}
-		 */
-		private String id;
-
-		/**
-		 * The payload of the {@link WebRequest}. For synchronous
-		 * {@link WebRequest}s, this is the result of the webrequest, for
-		 * asynchronous {@link WebRequest} payload will always be null
-		 */
-		private Object payload;
-
-		/**
-		 * May contain the {@link Throwable} object that caused this
-		 * {@link WebRequest} not to be successful (if
-		 * {@link WebRequestReturnContainer#isSuccessful()} returns
-		 * <code>false</code>)
-		 */
-		private Throwable throwable;
-
-		/**
-		 * The HTTP status code returned by the webserver
-		 */
-		private int httpStatusCode;
-
-		/**
-		 * The reply header
-		 */
-		private Map<String, List<String>> replyHeader;
-
-		private WebRequestReturnContainer() {
-
-		}
-
-		@SuppressWarnings("javadoc")
-		public boolean isSuccessful() {
-			return successful;
-		}
-
-		@SuppressWarnings("javadoc")
-		public void setSuccessful(boolean successful) {
-			this.successful = successful;
-		}
-
-		@SuppressWarnings("javadoc")
-		public String getId() {
-			return id;
-		}
-
-		@SuppressWarnings("javadoc")
-		public void setId(String id) {
-			this.id = id;
-		}
-
-		@SuppressWarnings("javadoc")
-		public Object getPayload() {
-			return payload;
-		}
-
-		@SuppressWarnings("javadoc")
-		public void setPayload(Object payload) {
-			this.payload = payload;
-		}
-
-		@SuppressWarnings("javadoc")
-		public Throwable getThrowable() {
-			return throwable;
-		}
-
-		@SuppressWarnings("javadoc")
-		public void setThrowable(Throwable throwable) {
-			this.throwable = throwable;
-		}
-
-		@SuppressWarnings("javadoc")
-		public int getHttpStatusCode() {
-			return httpStatusCode;
-		}
-
-		@SuppressWarnings("javadoc")
-		public void setHttpStatusCode(int httpStatusCode) {
-			this.httpStatusCode = httpStatusCode;
-		}
-
-		@SuppressWarnings("javadoc")
-		public Map<String, List<String>> getReplyHeader() {
-			return replyHeader;
-		}
-
-		@SuppressWarnings("javadoc")
-		public void setReplyHeader(Map<String, List<String>> replyHeader) {
-			this.replyHeader = replyHeader;
-		}
-
-	}
 }

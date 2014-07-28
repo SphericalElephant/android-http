@@ -20,7 +20,7 @@ import java.io.Serializable;
 import android.app.IntentService;
 import android.content.Intent;
 import at.diamonddogs.data.dataobjects.WebRequest;
-import at.diamonddogs.service.net.HttpService.WebRequestReturnContainer;
+import at.diamonddogs.data.dataobjects.WebRequestReturnContainer;
 import at.diamonddogs.service.net.HttpServiceAssister;
 
 /**
@@ -73,7 +73,7 @@ public class GenericImportService<T extends Serializable> extends IntentService 
 		contract.getBroadcastManager(intent).registerReceiver(contract.getBroadcastReceiver(intent), contract.getIntentFilter(intent));
 		if (contract.shouldImport(intent)) {
 			WebRequestReturnContainer container = assister.runSynchronousWebRequest(contract.getWebRequest(intent),
-					contract.getServiceProcessor(intent), contract.getDownloadProgressListener(intent));
+				contract.getServiceProcessor(intent), contract.getDownloadProgressListener(intent));
 			if (container.isSuccessful()) {
 				contract.sendImportSuccessful(intent, (T) container.getPayload());
 			} else {

@@ -34,6 +34,7 @@ import at.diamonddogs.data.adapter.ReplyAdapter;
 import at.diamonddogs.data.dataobjects.NonTimeCriticalTask;
 import at.diamonddogs.data.dataobjects.NonTimeCriticalTaskQueueDefaultConfiguration;
 import at.diamonddogs.data.dataobjects.WebRequest;
+import at.diamonddogs.data.dataobjects.WebRequestReturnContainer;
 import at.diamonddogs.exception.ServiceException;
 import at.diamonddogs.net.WebClient.DownloadProgressListener;
 import at.diamonddogs.nontimecritical.NonTimeCriticalTaskManager;
@@ -42,7 +43,6 @@ import at.diamonddogs.nontimecritical.NonTimeCriticalTaskQueue.NonTimeCriticalTa
 import at.diamonddogs.nontimecritical.NonTimeCriticalTaskQueue.NonTimeCriticalTaskQueueConfigurationFactory;
 import at.diamonddogs.nontimecritical.NonTimeCriticalTaskQueueConfigurationDefaultFactory;
 import at.diamonddogs.service.net.HttpService.HttpServiceBinder;
-import at.diamonddogs.service.net.HttpService.WebRequestReturnContainer;
 import at.diamonddogs.service.processor.DataProcessor;
 import at.diamonddogs.service.processor.ServiceProcessor;
 import at.diamonddogs.service.processor.SynchronousProcessor;
@@ -136,7 +136,7 @@ public class HttpServiceAssister {
 		this.context = context;
 		this.pendingWebRequests = new LinkedList<WebRequestInformation>();
 		this.nonTimeCriticalTaskManager = new NonTimeCriticalTaskManager(
-				new NonTimeCriticalTaskQueueConfigurationDefaultFactory().newInstance(), this);
+			new NonTimeCriticalTaskQueueConfigurationDefaultFactory().newInstance(), this);
 	}
 
 	/**
@@ -173,7 +173,7 @@ public class HttpServiceAssister {
 		}
 		if (activeServiceConnection == null) {
 			return context.bindService(new Intent(context, HttpService.class), activeServiceConnection = standardServiceConnection,
-					Context.BIND_AUTO_CREATE);
+				Context.BIND_AUTO_CREATE);
 		} else {
 			return false;
 		}
@@ -253,7 +253,7 @@ public class HttpServiceAssister {
 	 *            progress
 	 */
 	public void runWebRequest(Handler.Callback callback, WebRequest webRequest, ServiceProcessor<?> serviceProcessor,
-			DownloadProgressListener progressListener) {
+		DownloadProgressListener progressListener) {
 		runWebRequest(new Handler(callback), webRequest, serviceProcessor, progressListener);
 	}
 
@@ -289,7 +289,7 @@ public class HttpServiceAssister {
 	 *            progress
 	 */
 	public void runWebRequest(Handler handler, WebRequest webRequest, ServiceProcessor<?> serviceProcessor,
-			DownloadProgressListener progressListener) {
+		DownloadProgressListener progressListener) {
 		if (httpService == null) {
 			LOGGER.info("httpService is null, appending WebRequest to queue for later processing: " + webRequest);
 			addWebRequestToQueue(handler, webRequest, progressListener, serviceProcessor);
@@ -339,7 +339,7 @@ public class HttpServiceAssister {
 	 *            progress
 	 */
 	private void runTimeCriticalAsynchronousWebRequest(Handler handler, WebRequest webRequest, ServiceProcessor<?> serviceProcessor,
-			DownloadProgressListener progressListener) {
+		DownloadProgressListener progressListener) {
 		LOGGER.info("httpService is ready, running WebRequest directly");
 		if (!httpService.isProcessorRegistered(serviceProcessor.getProcessorID())) {
 			httpService.registerProcessor(serviceProcessor);
@@ -410,7 +410,7 @@ public class HttpServiceAssister {
 	 *         or <code>null</code> if the request failed.
 	 */
 	public WebRequestReturnContainer runSynchronousWebRequest(WebRequest webRequest, ServiceProcessor<?> serviceProcessor,
-			DownloadProgressListener progressListener) {
+		DownloadProgressListener progressListener) {
 		prepareForSyncRequest(serviceProcessor);
 		return httpService.runSynchronousWebRequest(webRequest, progressListener);
 	}
@@ -503,7 +503,7 @@ public class HttpServiceAssister {
 	 * @param serviceProcessor
 	 */
 	private void addWebRequestToQueue(Handler handler, WebRequest webRequest, DownloadProgressListener progressListener,
-			ServiceProcessor<?> serviceProcessor) {
+		ServiceProcessor<?> serviceProcessor) {
 		synchronized (pendingWebRequests) {
 			pendingWebRequests.add(new WebRequestInformation(handler, webRequest, progressListener, serviceProcessor));
 		}
@@ -551,7 +551,7 @@ public class HttpServiceAssister {
 					}
 					LOGGER.debug("Running " + webRequestInformation.webRequest + " after service binding!");
 					httpService.runWebRequest(webRequestInformation.handler, webRequestInformation.webRequest,
-							webRequestInformation.progressListener);
+						webRequestInformation.progressListener);
 				}
 				if (unbindServiceAfterWebRequestExecution.get()) {
 					unbindService();
@@ -614,7 +614,7 @@ public class HttpServiceAssister {
 		private DownloadProgressListener progressListener;
 
 		public WebRequestInformation(Handler handler, WebRequest webRequest, DownloadProgressListener progressListener,
-				ServiceProcessor<?> serviceProcessor) {
+			ServiceProcessor<?> serviceProcessor) {
 			this.handler = handler;
 			this.webRequest = webRequest;
 			this.progressListener = progressListener;
