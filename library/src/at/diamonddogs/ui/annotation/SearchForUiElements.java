@@ -19,9 +19,21 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 
+import android.app.Activity;
+import android.app.Fragment;
+import android.text.Annotation;
+import at.diamonddogs.data.dataobjects.WebRequest;
+
+/**
+ * This {@link Annotation} should be used on all fields that provide UI that
+ * should be processed when a {@link WebRequest} is running. Usually, this
+ * {@link Annotation} should be used on {@link Field}s storing {@link Activity}s
+ * or {@link Fragment}s.
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
-public @interface HideUiElementOnWebRequest {
+public @interface SearchForUiElements {
 
 }

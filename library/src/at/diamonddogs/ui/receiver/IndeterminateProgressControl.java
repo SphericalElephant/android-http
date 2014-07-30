@@ -13,15 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package at.diamonddogs.ui.annotation;
+package at.diamonddogs.ui.receiver;
 
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+/**
+ * To be implemented by any class that wants to hide, show or provide the state
+ * of indeterminate progress widgets
+ */
+public interface IndeterminateProgressControl {
+	/**
+	 * Shows the indeterminate progress
+	 */
+	public void showIndeterminateProgress();
 
-@Target(ElementType.FIELD)
-@Retention(RetentionPolicy.RUNTIME)
-public @interface HideUiElementOnWebRequest {
+	/**
+	 * Hides the indeterminate progress
+	 */
+	public void hideIndeterminateProgress();
 
+	/**
+	 * Returns the current state of indeterminate progress
+	 * 
+	 * @return <code>true</code> if the progress is showing, <code>false</code>
+	 *         otherwise
+	 */
+	public boolean isIndeterminateProgressShowing();
 }
