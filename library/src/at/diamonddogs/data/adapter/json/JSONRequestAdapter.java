@@ -24,12 +24,15 @@ import at.diamonddogs.data.adapter.WebRequestAdapter;
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.http.entity.JSONHttpEntity;
 
+import com.google.gson.Gson;
+
 /**
  * Wraps a usual {@link WebRequest} with the required data to send a JSON
  * {@link WebRequest}.
  */
 public class JSONRequestAdapter implements WebRequestAdapter<WebRequest> {
 	private final WebRequest webRequest;
+	private final Gson gson = new Gson();
 
 	public JSONRequestAdapter(WebRequest webRequest, JSONObject input) throws UnsupportedEncodingException {
 		this.webRequest = webRequest;
@@ -46,6 +49,12 @@ public class JSONRequestAdapter implements WebRequestAdapter<WebRequest> {
 	public JSONRequestAdapter(WebRequest webRequest, String input) throws UnsupportedEncodingException {
 		this.webRequest = webRequest;
 		JSONHttpEntity e = new JSONHttpEntity(input);
+		this.webRequest.setHttpEntity(e);
+	}
+
+	public JSONRequestAdapter(WebRequest webRequest, Object input) throws UnsupportedEncodingException {
+		this.webRequest = webRequest;
+		JSONHttpEntity e = new JSONHttpEntity(gson.toJson(input));
 		this.webRequest.setHttpEntity(e);
 	}
 
