@@ -26,7 +26,7 @@ import at.diamonddogs.net.WebClient.HTTPStatus;
 import at.diamonddogs.util.CacheManager.CachedObject;
 
 public class NoContentProcessor extends ServiceProcessor<Void> {
-	private static final int ID = 158151;
+	public static final int ID = 158151;
 
 	@Override
 	public void processWebReply(Context c, ReplyAdapter r, Handler handler) {
