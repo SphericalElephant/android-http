@@ -35,7 +35,7 @@ public class NoContentProcessor extends ServiceProcessor<Void> {
 				int httpStatusCode = ((WebReply) r.getReply()).getHttpStatusCode();
 				if (httpStatusCode != HTTPStatus.HTTP_NO_CONTENT) {
 					handler.sendMessage(createErrorMessage(
-						new ProcessorExeception("Request had content, status code was " + httpStatusCode), r));
+						new ProcessorExeception("Request had content, or wrong status code status code was " + httpStatusCode), r));
 				} else {
 					handler.sendMessage(createReturnMessage(r, null));
 				}

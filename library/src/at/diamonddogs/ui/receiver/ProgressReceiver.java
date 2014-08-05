@@ -24,6 +24,8 @@ import android.content.Intent;
 import android.os.Handler;
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.service.net.WebRequestMap;
+import at.diamonddogs.ui.annotation.UiAnnotationNotRunningProcessor;
+import at.diamonddogs.ui.annotation.UiAnnotationRunningProcessor;
 
 /**
  * A small {@link BroadcastReceiver} that can be used to control the
@@ -33,6 +35,8 @@ public class ProgressReceiver extends BroadcastReceiver {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProgressReceiver.class.getSimpleName());
 
 	private IndeterminateProgressControl indeterminateProgressControl;
+	private final UiAnnotationRunningProcessor uiAnnotationRunningProcessor = new UiAnnotationRunningProcessor();
+	private final UiAnnotationNotRunningProcessor uiAnnotationNotRunningProcessor = new UiAnnotationNotRunningProcessor();
 	private Handler handler;
 
 	public ProgressReceiver(IndeterminateProgressControl indeterminateProgressControl) {
@@ -51,9 +55,14 @@ public class ProgressReceiver extends BroadcastReceiver {
 
 				@Override
 				public void run() {
-					LOGGER.info("Attempting to show progress");
-					if (!indeterminateProgressControl.isIndeterminateProgressShowing()) {
-						indeterminateProgressControl.showIndeterminateProgress();
+					try {
+						LOGGER.info("Attempting to show progress");
+						if (!indeterminateProgressControl.isIndeterminateProgressShowing()) {
+							indeterminateProgressControl.showIndeterminateProgress();
+							indeterminateProgressControl.processUiAnnotations(uiAnnotationRunningProcessor);
+						}
+					} catch (Throwable tr) {
+						LOGGER.error("Error while running UI processing.", tr);
 					}
 				}
 			});
@@ -63,9 +72,14 @@ public class ProgressReceiver extends BroadcastReceiver {
 
 				@Override
 				public void run() {
-					LOGGER.info("Attempting to hide progress");
-					if (indeterminateProgressControl.isIndeterminateProgressShowing()) {
-						indeterminateProgressControl.hideIndeterminateProgress();
+					try {
+						LOGGER.info("Attempting to hide progress");
+						if (indeterminateProgressControl.isIndeterminateProgressShowing()) {
+							indeterminateProgressControl.hideIndeterminateProgress();
+							indeterminateProgressControl.processUiAnnotations(uiAnnotationNotRunningProcessor);
+						}
+					} catch (Throwable tr) {
+						LOGGER.error("Error while running UI processing.", tr);
 					}
 				}
 			});

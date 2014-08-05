@@ -15,11 +15,13 @@
  */
 package at.diamonddogs.ui.receiver;
 
+import at.diamonddogs.ui.annotation.UiAnnotationProcessable;
+
 /**
  * To be implemented by any class that wants to hide, show or provide the state
  * of indeterminate progress widgets
  */
-public interface IndeterminateProgressControl {
+public interface IndeterminateProgressControl extends UiAnnotationProcessable {
 	/**
 	 * Shows the indeterminate progress
 	 */
