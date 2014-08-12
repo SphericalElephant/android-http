@@ -21,6 +21,7 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import at.diamonddogs.data.adapter.WebRequestAdapter;
+import at.diamonddogs.data.dataobjects.JSONWebRequest;
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.http.entity.JSONHttpEntity;
 
@@ -29,6 +30,8 @@ import com.google.gson.Gson;
 /**
  * Wraps a usual {@link WebRequest} with the required data to send a JSON
  * {@link WebRequest}.
+ * 
+ * @see {@link JSONWebRequest}
  */
 public class JSONRequestAdapter implements WebRequestAdapter<WebRequest> {
 	private final WebRequest webRequest;
