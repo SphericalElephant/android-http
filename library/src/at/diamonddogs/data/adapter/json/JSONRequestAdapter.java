@@ -25,7 +25,9 @@ import at.diamonddogs.data.dataobjects.JSONWebRequest;
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.http.entity.JSONHttpEntity;
 
+import com.google.gson.ExclusionStrategy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Wraps a usual {@link WebRequest} with the required data to send a JSON
@@ -35,27 +37,38 @@ import com.google.gson.Gson;
  */
 public class JSONRequestAdapter implements WebRequestAdapter<WebRequest> {
 	private final WebRequest webRequest;
-	private final Gson gson = new Gson();
+	private final Gson gson;
 
 	public JSONRequestAdapter(WebRequest webRequest, JSONObject input) throws UnsupportedEncodingException {
+		gson = new Gson();
 		this.webRequest = webRequest;
 		JSONHttpEntity e = new JSONHttpEntity(input);
 		this.webRequest.setHttpEntity(e);
 	}
 
 	public JSONRequestAdapter(WebRequest webRequest, JSONArray input) throws UnsupportedEncodingException {
+		gson = new Gson();
 		this.webRequest = webRequest;
 		JSONHttpEntity e = new JSONHttpEntity(input);
 		this.webRequest.setHttpEntity(e);
 	}
 
 	public JSONRequestAdapter(WebRequest webRequest, String input) throws UnsupportedEncodingException {
+		gson = new Gson();
 		this.webRequest = webRequest;
 		JSONHttpEntity e = new JSONHttpEntity(input);
 		this.webRequest.setHttpEntity(e);
 	}
 
 	public JSONRequestAdapter(WebRequest webRequest, Object input) throws UnsupportedEncodingException {
+		gson = new Gson();
+		this.webRequest = webRequest;
+		JSONHttpEntity e = new JSONHttpEntity(gson.toJson(input));
+		this.webRequest.setHttpEntity(e);
+	}
+
+	public JSONRequestAdapter(WebRequest webRequest, Object input, ExclusionStrategy excludeStrategy) throws UnsupportedEncodingException {
+		gson = new GsonBuilder().setExclusionStrategies(excludeStrategy).create();
 		this.webRequest = webRequest;
 		JSONHttpEntity e = new JSONHttpEntity(gson.toJson(input));
 		this.webRequest.setHttpEntity(e);

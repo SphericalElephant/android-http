@@ -17,18 +17,32 @@ package at.diamonddogs.data.dataobjects;
 
 import at.diamonddogs.http.entity.JSONHttpEntity;
 
+import com.google.gson.ExclusionStrategy;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 /**
  * Use this special form of {@link WebRequest} if you want to transport JSON
  * data. Uses gson to serialise the request data.
  */
 public class JSONWebRequest<T> extends WebRequest {
-	private final Gson gson = new Gson();
+	private final Gson gson;
 
 	public JSONWebRequest(T data) {
+		gson = new Gson();
 		try {
 			JSONHttpEntity e = new JSONHttpEntity(gson.toJson(data));
+			setHttpEntity(e);
+		} catch (Throwable tr) {
+			throw new RuntimeException(tr);
+		}
+	}
+
+	public JSONWebRequest(T data, ExclusionStrategy excludeStrategy) {
+		gson = new GsonBuilder().setExclusionStrategies(excludeStrategy).create();
+		try {
+			JSONHttpEntity e = new JSONHttpEntity(gson.toJson(data));
+			setHttpEntity(e);
 		} catch (Throwable tr) {
 			throw new RuntimeException(tr);
 		}
