@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">android-http</string>
+    <string name="general_webrequestfailed">Something went wrong, please try again later!</string>
 </resources>
