@@ -47,6 +47,10 @@ import at.diamonddogs.util.Utils;
  * This processor should be used if the data returned by the {@link WebRequest}
  * contains an image. This {@link ServiceProcessor} handles caching and handles
  * image creation.
+ * 
+ * TODO: deprecate ImageProcessor and implement a v2 that follows the
+ * ServiceProcessor protocol, also separate concerns like creating default image
+ * webrequests etc
  */
 public class ImageProcessor extends DataProcessor<Bitmap, Bitmap> {
 
