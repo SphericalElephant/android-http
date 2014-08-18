@@ -74,12 +74,6 @@ public abstract class GenericCallback<T extends ServerReply> implements Callback
 
 	@Override
 	public boolean handleMessage(Message msg) {
-		Object o = ServiceProcessorMessageUtil.getPayLoad(msg);
-
-		if (!(o instanceof ServerReply)) {
-			throw new IllegalArgumentException("Payloads that want to use GenericCallback need to implement ServerReply");
-		}
-		ServerReply serverReply = (ServerReply) o;
 
 		if (!ServiceProcessorMessageUtil.isSuccessful(msg)) {
 			Throwable tr = ServiceProcessorMessageUtil.getThrowable(msg);
@@ -87,6 +81,13 @@ public abstract class GenericCallback<T extends ServerReply> implements Callback
 			showToast();
 			return onException(tr);
 		}
+
+		Object o = ServiceProcessorMessageUtil.getPayLoad(msg);
+
+		if (!(o instanceof ServerReply)) {
+			throw new IllegalArgumentException("Payloads that want to use GenericCallback need to implement ServerReply");
+		}
+		ServerReply serverReply = (ServerReply) o;
 
 		if (!serverReply.isSuccess()) {
 			String errorMessage = serverReply.getError();
