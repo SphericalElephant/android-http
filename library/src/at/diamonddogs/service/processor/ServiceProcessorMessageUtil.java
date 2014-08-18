@@ -23,8 +23,7 @@ import at.diamonddogs.data.dataobjects.WebRequest;
 
 /**
  * A small util class that can be used to conveniently obtain various
- * information from a
- * reply {@link Message}.
+ * information from a reply {@link Message}.
  */
 public class ServiceProcessorMessageUtil {
 
@@ -121,6 +120,20 @@ public class ServiceProcessorMessageUtil {
 	 */
 	public static boolean isFromCache(Message msg) {
 		return msg.getData().getBoolean(ServiceProcessor.BUNDLE_EXTRA_MESSAGE_FROMCACHE, false);
+	}
+
+	/**
+	 * Returns the payload, casted to the preferred type. Warning, casting might
+	 * fail if the types are not correct! Due to the generic nature of this
+	 * code, we cannot implement save type checks.
+	 * 
+	 * @param msg
+	 *            the input {@link Message}
+	 * @return the payload
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T getCastedPayLoad(Message msg) {
+		return (T) msg.obj;
 	}
 
 	/**
