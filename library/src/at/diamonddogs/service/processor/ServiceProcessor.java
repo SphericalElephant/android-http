@@ -31,8 +31,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import at.diamonddogs.data.adapter.ReplyAdapter;
-import at.diamonddogs.data.adapter.parcelable.ParcelableAdapterWebReply;
-import at.diamonddogs.data.adapter.parcelable.ParcelableAdapterWebRequest;
 import at.diamonddogs.data.dataobjects.CacheInformation;
 import at.diamonddogs.data.dataobjects.Reply;
 import at.diamonddogs.data.dataobjects.Request;
@@ -274,8 +272,8 @@ public abstract class ServiceProcessor<OUTPUT> {
 		m.arg1 = ServiceProcessor.RETURN_MESSAGE_OK;
 		m.obj = payload;
 		Bundle dataBundle = new Bundle();
-		dataBundle.putParcelable(BUNDLE_EXTRA_MESSAGE_REPLY, new ParcelableAdapterWebReply((WebReply) replyAdapter.getReply()));
-		dataBundle.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest((WebRequest) replyAdapter.getRequest()));
+		dataBundle.putSerializable(BUNDLE_EXTRA_MESSAGE_REPLY, (WebReply) replyAdapter.getReply());
+		dataBundle.putSerializable(BUNDLE_EXTRA_MESSAGE_REQUEST, (WebRequest) replyAdapter.getRequest());
 		dataBundle.putInt(BUNDLE_EXTRA_MESSAGE_HTTPSTATUSCODE, ((WebReply) replyAdapter.getReply()).getHttpStatusCode());
 		dataBundle.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, false);
 		m.setData(dataBundle);
@@ -298,7 +296,7 @@ public abstract class ServiceProcessor<OUTPUT> {
 		m.arg1 = ServiceProcessor.RETURN_MESSAGE_OK;
 		m.obj = payload;
 		Bundle dataBundle = new Bundle();
-		dataBundle.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest(webRequest));
+		dataBundle.putSerializable(BUNDLE_EXTRA_MESSAGE_REQUEST, webRequest);
 		dataBundle.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, true);
 		m.setData(dataBundle);
 		return m;
@@ -320,8 +318,8 @@ public abstract class ServiceProcessor<OUTPUT> {
 		m.arg1 = RETURN_MESSAGE_FAIL;
 		Bundle b = new Bundle(1);
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_THROWABLE, tr == null ? new Throwable("Unknown Error") : tr);
-		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest((WebRequest) replyAdapter.getRequest()));
-		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REPLY, new ParcelableAdapterWebReply((WebReply) replyAdapter.getReply()));
+		b.putSerializable(BUNDLE_EXTRA_MESSAGE_REQUEST, (WebRequest) replyAdapter.getRequest());
+		b.putSerializable(BUNDLE_EXTRA_MESSAGE_REPLY, (WebReply) replyAdapter.getReply());
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, false);
 		if (replyAdapter.getReply() != null) {
 			b.putInt(BUNDLE_EXTRA_MESSAGE_HTTPSTATUSCODE, ((WebReply) replyAdapter.getReply()).getHttpStatusCode());
@@ -346,8 +344,8 @@ public abstract class ServiceProcessor<OUTPUT> {
 		Bundle b = new Bundle(1);
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_THROWABLE, replyAdapter.getThrowable() == null ? new Throwable("Unknown error")
 			: replyAdapter.getThrowable());
-		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest((WebRequest) replyAdapter.getRequest()));
-		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REPLY, new ParcelableAdapterWebReply((WebReply) replyAdapter.getReply()));
+		b.putSerializable(BUNDLE_EXTRA_MESSAGE_REQUEST, (WebRequest) replyAdapter.getRequest());
+		b.putSerializable(BUNDLE_EXTRA_MESSAGE_REPLY, (WebReply) replyAdapter.getReply());
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, false);
 		if (replyAdapter.getReply() != null) {
 			b.putInt(BUNDLE_EXTRA_MESSAGE_HTTPSTATUSCODE, ((WebReply) replyAdapter.getReply()).getHttpStatusCode());
@@ -372,7 +370,7 @@ public abstract class ServiceProcessor<OUTPUT> {
 		m.arg1 = RETURN_MESSAGE_FAIL;
 		Bundle b = new Bundle(1);
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_THROWABLE, tr);
-		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest(webRequest));
+		b.putSerializable(BUNDLE_EXTRA_MESSAGE_REQUEST, webRequest);
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, true);
 		m.setData(b);
 		return m;
@@ -393,7 +391,7 @@ public abstract class ServiceProcessor<OUTPUT> {
 		m.arg1 = RETURN_MESSAGE_FAIL;
 		Bundle b = new Bundle(1);
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_THROWABLE, new Throwable("Unknown error"));
-		b.putParcelable(BUNDLE_EXTRA_MESSAGE_REQUEST, new ParcelableAdapterWebRequest(webRequest));
+		b.putSerializable(BUNDLE_EXTRA_MESSAGE_REQUEST, webRequest);
 		b.putSerializable(BUNDLE_EXTRA_MESSAGE_FROMCACHE, true);
 		m.setData(b);
 		return m;

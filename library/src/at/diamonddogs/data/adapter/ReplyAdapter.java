@@ -15,6 +15,8 @@
  */
 package at.diamonddogs.data.adapter;
 
+import java.io.Serializable;
+
 import at.diamonddogs.data.dataobjects.Reply;
 import at.diamonddogs.data.dataobjects.Request;
 import at.diamonddogs.data.dataobjects.WebRequest;
@@ -23,7 +25,7 @@ import at.diamonddogs.data.dataobjects.WebRequest;
  * The {@link ReplyAdapter} holds the status, request, reply and a throwable
  * object if applicable.
  */
-public class ReplyAdapter {
+public class ReplyAdapter implements Serializable {
 	/**
 	 * The status of the reply
 	 */

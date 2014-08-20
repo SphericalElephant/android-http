@@ -15,9 +15,11 @@
  */
 package at.diamonddogs.data.dataobjects;
 
+import java.io.Serializable;
+
 /**
  * Generalized interface for replies
  */
-public interface Reply {
+public interface Reply extends Serializable {
 
 }

@@ -15,12 +15,13 @@
  */
 package at.diamonddogs.data.dataobjects;
 
+import java.io.Serializable;
 import java.net.URL;
 
 /**
  * Generalized interface for requests
  */
-public interface Request {
+public interface Request extends Serializable {
 	/**
 	 * Returns the request's URL
 	 * 
