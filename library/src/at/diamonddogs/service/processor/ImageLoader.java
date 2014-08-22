@@ -112,7 +112,6 @@ public class ImageLoader {
 
 		public AllowRetryCallback(ImageView imageView, OnClickListener onClickListener, ImageProcessHandler handler, int defaultImage,
 			ScaleType scaleType) {
-			LOGGER.error("FOO 1 -> " + imageView + " " + imageView.getScaleType());
 			this.imageView = imageView;
 			this.imageView.setImageResource(defaultImage);
 			this.oldScaleType = scaleType;
@@ -128,10 +127,8 @@ public class ImageLoader {
 		@Override
 		public boolean handleMessage(Message msg) {
 			if (allowUserRetry && !ServiceProcessorMessageUtil.isSuccessful(msg)) {
-				LOGGER.info("Image download was not successful, allowing the user to retry!");
 				final WebRequest oldWebRequest = ServiceProcessorMessageUtil
 					.getWebRequest(msg);
-				LOGGER.error("FOO 2 -> " + imageView + " " + imageView.getScaleType());
 				imageView.setScaleType(ScaleType.CENTER_INSIDE);
 				imageView.setImageResource(defaultImage);
 				imageView.setOnClickListener(new OnClickListener() {
@@ -154,14 +151,12 @@ public class ImageLoader {
 				return false;
 			} else {
 				LOGGER.info("Image download succeded, restoring old OnClickListener and ScaleType for image view");
-				LOGGER.error("FOO 3 -> " + imageView + " " + imageView.getScaleType());
 				imageView.setOnClickListener(onClickListener);
 				imageView.setScaleType(oldScaleType);
 				imageView.setClickable(wasImageViewClickable);
 				imageView.setFocusable(wasImageViewFocusable);
 				imageView.setFocusableInTouchMode(wasImageFocusableInTouchMode);
 				imageView.invalidate();
-				LOGGER.error("FOO 4 -> " + imageView + " " + imageView.getScaleType());
 				return callback.handleMessage(msg);
 			}
 		}
