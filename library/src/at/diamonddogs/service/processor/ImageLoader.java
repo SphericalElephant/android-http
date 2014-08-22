@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.animation.Animation;
 import android.widget.ImageView;
+import android.widget.ImageView.ScaleType;
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.service.net.HttpServiceAssister;
 import at.diamonddogs.service.processor.ImageProcessor.ImageProcessHandler;
@@ -48,7 +49,7 @@ public class ImageLoader {
 
 	public void loadImage(ImageView imageView, OnClickListener onClickListener, String url, Animation fadeInAnimation, int defaultImage) {
 		ImageProcessor.ImageProcessHandler handler = new ImageProcessor.ImageProcessHandler(imageView, url, fadeInAnimation, defaultImage);
-		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler));
+		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, defaultImage));
 		// @formatter:off 
 		assister.runWebRequest(
 			handler,
@@ -60,7 +61,7 @@ public class ImageLoader {
 
 	public void loadImage(ImageView imageView, OnClickListener onClickListener, String url, int defaultImage) {
 		ImageProcessor.ImageProcessHandler handler = new ImageProcessor.ImageProcessHandler(imageView, url, defaultImage);
-		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler));
+		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, defaultImage));
 		// @formatter:off 
 		assister.runWebRequest(
 			handler,
@@ -72,7 +73,7 @@ public class ImageLoader {
 
 	public void loadImage(ImageView imageView, OnClickListener onClickListener, String url, Animation fadeInAnimation) {
 		ImageProcessor.ImageProcessHandler handler = new ImageProcessor.ImageProcessHandler(imageView, url, fadeInAnimation);
-		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler));
+		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, -1));
 		// @formatter:off 
 		assister.runWebRequest(
 			handler,
@@ -84,7 +85,7 @@ public class ImageLoader {
 
 	public void loadImage(ImageView imageView, OnClickListener onClickListener, String url) {
 		ImageProcessor.ImageProcessHandler handler = new ImageProcessor.ImageProcessHandler(imageView, url);
-		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler));
+		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, -1));
 		// @formatter:off 
 		assister.runWebRequest(
 			handler,
@@ -102,12 +103,18 @@ public class ImageLoader {
 		private ImageView imageView;
 		private OnClickListener onClickListener;
 		private ImageProcessHandler handler;
+		private int defaultImage = -1;
+		private ScaleType oldScaleType;
 
-		public AllowRetryCallback(ImageView imageView, OnClickListener onClickListener, ImageProcessHandler handler) {
+		public AllowRetryCallback(ImageView imageView, OnClickListener onClickListener, ImageProcessHandler handler, int defaultImage) {
 			super();
 			this.imageView = imageView;
+			this.oldScaleType = imageView.getScaleType();
 			this.onClickListener = onClickListener;
 			this.handler = handler;
+			this.defaultImage = defaultImage;
+			this.imageView.setScaleType(ScaleType.CENTER_INSIDE);
+			this.imageView.setImageResource(defaultImage);
 		}
 
 		@Override
@@ -116,6 +123,8 @@ public class ImageLoader {
 				LOGGER.info("Image download was not successful, allowing the user to retry!");
 				final WebRequest oldWebRequest = ServiceProcessorMessageUtil
 					.getWebRequest(msg);
+				imageView.setScaleType(ScaleType.CENTER_INSIDE);
+				imageView.setImageResource(defaultImage);
 				imageView.setOnClickListener(new OnClickListener() {
 
 					@Override
@@ -135,8 +144,9 @@ public class ImageLoader {
 				});
 				return false;
 			} else {
-				LOGGER.info("Image download succeded, restoring old OnClickListener for image view");
+				LOGGER.info("Image download succeded, restoring old OnClickListener and ScaleType for image view");
 				imageView.setOnClickListener(onClickListener);
+				imageView.setScaleType(oldScaleType);
 				return callback.handleMessage(msg);
 			}
 		}
