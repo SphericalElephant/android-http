@@ -105,6 +105,9 @@ public class ImageLoader {
 		private ImageProcessHandler handler;
 		private int defaultImage = -1;
 		private ScaleType oldScaleType;
+		private boolean wasImageViewClickable;
+		private boolean wasImageViewFocusable;
+		private boolean wasImageFocusableInTouchMode;
 
 		public AllowRetryCallback(ImageView imageView, OnClickListener onClickListener, ImageProcessHandler handler, int defaultImage) {
 			super();
@@ -115,6 +118,9 @@ public class ImageLoader {
 			this.defaultImage = defaultImage;
 			this.imageView.setScaleType(ScaleType.CENTER_INSIDE);
 			this.imageView.setImageResource(defaultImage);
+			this.wasImageViewClickable = this.imageView.isClickable();
+			this.wasImageViewFocusable = this.imageView.isFocusable();
+			this.wasImageFocusableInTouchMode = this.imageView.isFocusableInTouchMode();
 		}
 
 		@Override
@@ -147,6 +153,9 @@ public class ImageLoader {
 				LOGGER.info("Image download succeded, restoring old OnClickListener and ScaleType for image view");
 				imageView.setOnClickListener(onClickListener);
 				imageView.setScaleType(oldScaleType);
+				imageView.setClickable(wasImageViewClickable);
+				imageView.setFocusable(wasImageViewFocusable);
+				imageView.setFocusableInTouchMode(wasImageFocusableInTouchMode);
 				return callback.handleMessage(msg);
 			}
 		}
