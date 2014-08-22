@@ -47,9 +47,10 @@ public class ImageLoader {
 		this.callback = callback;
 	}
 
-	public void loadImage(ImageView imageView, OnClickListener onClickListener, String url, Animation fadeInAnimation, int defaultImage) {
+	public void loadImage(ImageView imageView, ScaleType scaleType, OnClickListener onClickListener, String url, Animation fadeInAnimation,
+		int defaultImage) {
 		ImageProcessor.ImageProcessHandler handler = new ImageProcessor.ImageProcessHandler(imageView, url, fadeInAnimation, defaultImage);
-		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, defaultImage));
+		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, defaultImage, scaleType));
 		// @formatter:off 
 		assister.runWebRequest(
 			handler,
@@ -59,9 +60,9 @@ public class ImageLoader {
 		// @formatter:on
 	}
 
-	public void loadImage(ImageView imageView, OnClickListener onClickListener, String url, int defaultImage) {
+	public void loadImage(ImageView imageView, ScaleType scaleType, OnClickListener onClickListener, String url, int defaultImage) {
 		ImageProcessor.ImageProcessHandler handler = new ImageProcessor.ImageProcessHandler(imageView, url, defaultImage);
-		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, defaultImage));
+		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, defaultImage, scaleType));
 		// @formatter:off 
 		assister.runWebRequest(
 			handler,
@@ -71,9 +72,9 @@ public class ImageLoader {
 		// @formatter:on
 	}
 
-	public void loadImage(ImageView imageView, OnClickListener onClickListener, String url, Animation fadeInAnimation) {
+	public void loadImage(ImageView imageView, ScaleType scaleType, OnClickListener onClickListener, String url, Animation fadeInAnimation) {
 		ImageProcessor.ImageProcessHandler handler = new ImageProcessor.ImageProcessHandler(imageView, url, fadeInAnimation);
-		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, -1));
+		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, -1, scaleType));
 		// @formatter:off 
 		assister.runWebRequest(
 			handler,
@@ -83,9 +84,9 @@ public class ImageLoader {
 		// @formatter:on
 	}
 
-	public void loadImage(ImageView imageView, OnClickListener onClickListener, String url) {
+	public void loadImage(ImageView imageView, ScaleType scaleType, OnClickListener onClickListener, String url) {
 		ImageProcessor.ImageProcessHandler handler = new ImageProcessor.ImageProcessHandler(imageView, url);
-		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, -1));
+		handler.setCallback(new AllowRetryCallback(imageView, onClickListener, handler, -1, scaleType));
 		// @formatter:off 
 		assister.runWebRequest(
 			handler,
@@ -109,18 +110,19 @@ public class ImageLoader {
 		private boolean wasImageViewFocusable;
 		private boolean wasImageFocusableInTouchMode;
 
-		public AllowRetryCallback(ImageView imageView, OnClickListener onClickListener, ImageProcessHandler handler, int defaultImage) {
-			super();
+		public AllowRetryCallback(ImageView imageView, OnClickListener onClickListener, ImageProcessHandler handler, int defaultImage,
+			ScaleType scaleType) {
+			LOGGER.error("FOO 1 -> " + imageView + " " + imageView.getScaleType());
 			this.imageView = imageView;
-			this.oldScaleType = imageView.getScaleType();
-			this.onClickListener = onClickListener;
-			this.handler = handler;
-			this.defaultImage = defaultImage;
-			this.imageView.setScaleType(ScaleType.CENTER_INSIDE);
 			this.imageView.setImageResource(defaultImage);
+			this.oldScaleType = scaleType;
 			this.wasImageViewClickable = this.imageView.isClickable();
 			this.wasImageViewFocusable = this.imageView.isFocusable();
 			this.wasImageFocusableInTouchMode = this.imageView.isFocusableInTouchMode();
+			this.imageView.setScaleType(ScaleType.CENTER_INSIDE);
+			this.onClickListener = onClickListener;
+			this.handler = handler;
+			this.defaultImage = defaultImage;
 		}
 
 		@Override
@@ -129,6 +131,7 @@ public class ImageLoader {
 				LOGGER.info("Image download was not successful, allowing the user to retry!");
 				final WebRequest oldWebRequest = ServiceProcessorMessageUtil
 					.getWebRequest(msg);
+				LOGGER.error("FOO 2 -> " + imageView + " " + imageView.getScaleType());
 				imageView.setScaleType(ScaleType.CENTER_INSIDE);
 				imageView.setImageResource(defaultImage);
 				imageView.setOnClickListener(new OnClickListener() {
@@ -151,11 +154,14 @@ public class ImageLoader {
 				return false;
 			} else {
 				LOGGER.info("Image download succeded, restoring old OnClickListener and ScaleType for image view");
+				LOGGER.error("FOO 3 -> " + imageView + " " + imageView.getScaleType());
 				imageView.setOnClickListener(onClickListener);
 				imageView.setScaleType(oldScaleType);
 				imageView.setClickable(wasImageViewClickable);
 				imageView.setFocusable(wasImageViewFocusable);
 				imageView.setFocusableInTouchMode(wasImageFocusableInTouchMode);
+				imageView.invalidate();
+				LOGGER.error("FOO 4 -> " + imageView + " " + imageView.getScaleType());
 				return callback.handleMessage(msg);
 			}
 		}
