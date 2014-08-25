@@ -26,6 +26,9 @@ import com.google.gson.GsonBuilder;
  * data. Uses gson to serialise the request data.
  */
 public class JSONWebRequest<T> extends WebRequest {
+
+	private static final long serialVersionUID = 2254899992625804340L;
+
 	private final Gson gson;
 
 	public JSONWebRequest(T data) {

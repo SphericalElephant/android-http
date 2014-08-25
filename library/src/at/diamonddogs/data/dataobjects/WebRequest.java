@@ -40,6 +40,8 @@ import at.diamonddogs.service.net.HttpService;
  */
 public class WebRequest implements Request {
 
+	private static final long serialVersionUID = 4767331321000277022L;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(WebRequest.class.getSimpleName());
 
 	/**
