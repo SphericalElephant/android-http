@@ -37,7 +37,7 @@ public class WebComicProcessor extends XMLProcessor<WebComic> {
 
 	public static final int ID = 12581751;
 
-	private static final String IMAGE_URL_REGEX = ".*<img src=\"(.*?)\".*";
+	private static final String IMAGE_URL_REGEX = ".*<img.*src=\"(.*?)\".*";
 	private static final Pattern IMAGE_URL_PATTERN = Pattern.compile(IMAGE_URL_REGEX);
 
 	/**
