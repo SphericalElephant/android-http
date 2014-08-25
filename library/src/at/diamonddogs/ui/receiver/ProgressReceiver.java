@@ -29,7 +29,8 @@ import at.diamonddogs.ui.annotation.UiAnnotationRunningProcessor;
 
 /**
  * A small {@link BroadcastReceiver} that can be used to control the
- * indeterminate progress for {@link WebRequest}s
+ * indeterminate progress for {@link WebRequest}s. Must be initialized on the Ui
+ * (Main) Thread
  */
 public class ProgressReceiver extends BroadcastReceiver {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProgressReceiver.class.getSimpleName());
