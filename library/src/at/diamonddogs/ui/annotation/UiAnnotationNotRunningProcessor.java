@@ -35,16 +35,18 @@ public class UiAnnotationNotRunningProcessor implements UiAnnotationProcessor {
 	}
 
 	private void setWebRequestsNotRunningState(Object o) throws IllegalAccessException, IllegalArgumentException {
-		Field[] fields = o.getClass().getFields();
+		Field[] fields = o.getClass().getDeclaredFields();
 		for (Field f : fields) {
 
 			f.setAccessible(true);
 			Object obj = f.get(o);
 			if (obj instanceof View) {
+				LOGGER.info("View found");
 				View v = (View) obj;
 				handleViewAnnotationsNotRunning(f, v);
 			} else if (f.isAnnotationPresent(SearchForUiElements.class)) {
-				setWebRequestsNotRunningState(o);
+				LOGGER.info("SearchForUiElements found, recursive lookup");
+				setWebRequestsNotRunningState(obj);
 			}
 
 			f.setAccessible(false);
@@ -53,9 +55,11 @@ public class UiAnnotationNotRunningProcessor implements UiAnnotationProcessor {
 
 	private void handleViewAnnotationsNotRunning(Field f, View v) {
 		if (f.isAnnotationPresent(DisableUiElementOnWebRequest.class)) {
+			LOGGER.info("CleanUiElementOnWebRequest annotation found");
 			v.setEnabled(true);
 		}
 		if (f.isAnnotationPresent(HideUiElementOnWebRequest.class)) {
+			LOGGER.info("HideUiElementOnWebRequest annotation found");
 			v.setVisibility(View.VISIBLE);
 		}
 	}
