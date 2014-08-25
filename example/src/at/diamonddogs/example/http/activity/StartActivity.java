@@ -59,6 +59,8 @@ public class StartActivity extends Activity {
 			ImageLoadingExampleListActivity.class));
 		adapter.add(new Example("UIAnnotationExampleActivity",
 			"Demonstrates how android-http can modify the ui according to webrequest states", UiAnnotationExampleActivity.class));
+		adapter.add(new Example("ImageLoaderExampleActivity", "Demonstrates the use of the ImageLoader and image loading retries",
+			ImageLoaderExampleActivity.class));
 		list.setAdapter(adapter);
 		list.setOnItemClickListener(new OnItemClickListener() {
 

@@ -27,6 +27,7 @@ import android.view.animation.Animation;
 import android.widget.ImageView;
 import android.widget.ImageView.ScaleType;
 import at.diamonddogs.data.dataobjects.WebRequest;
+import at.diamonddogs.net.WebClient.HTTPStatus;
 import at.diamonddogs.service.net.HttpServiceAssister;
 import at.diamonddogs.service.processor.ImageProcessor.ImageProcessHandler;
 
@@ -126,7 +127,8 @@ public class ImageLoader {
 
 		@Override
 		public boolean handleMessage(Message msg) {
-			if (allowUserRetry && !ServiceProcessorMessageUtil.isSuccessful(msg)) {
+			if (allowUserRetry
+				&& (!ServiceProcessorMessageUtil.isSuccessful(msg) || ServiceProcessorMessageUtil.getHttpStatusCode(msg) != HTTPStatus.HTTP_OK)) {
 				final WebRequest oldWebRequest = ServiceProcessorMessageUtil
 					.getWebRequest(msg);
 				imageView.setScaleType(ScaleType.CENTER_INSIDE);

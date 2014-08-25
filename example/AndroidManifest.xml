@@ -31,6 +31,8 @@
         <activity android:name="at.diamonddogs.example.http.activity.NonTimeCriticalExampleActivity" />
         <activity android:name="at.diamonddogs.example.http.activity.ImageLoadingExampleListActivity" />
         <activity android:name="at.diamonddogs.example.http.activity.UiAnnotationExampleActivity" />
+                <activity android:name="at.diamonddogs.example.http.activity.ImageLoaderExampleActivity" />
+        
         <provider
             android:name="at.diamonddogs.contentprovider.CacheContentProvider"
             android:authorities="at.diamonddogs.example.contentprovider.cachecontentprovider"
