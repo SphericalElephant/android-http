@@ -20,6 +20,14 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import android.view.View;
+import at.diamonddogs.data.dataobjects.WebRequest;
+
+/**
+ * This annotation can be placed on all {@link View}s and will hide the
+ * {@link View} in question whenever a {@link WebRequest} starts running. When
+ * all {@link WebRequest}s completed, the {@link View} will be shown again.
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface HideUiElementOnWebRequest {

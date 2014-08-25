@@ -22,7 +22,11 @@ import org.slf4j.LoggerFactory;
 
 import android.view.View;
 import android.widget.TextView;
+import at.diamonddogs.data.dataobjects.WebRequest;
 
+/**
+ * This processor is used when {@link WebRequest}s start running
+ */
 public final class UiAnnotationRunningProcessor implements UiAnnotationProcessor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UiAnnotationRunningProcessor.class.getSimpleName());
 

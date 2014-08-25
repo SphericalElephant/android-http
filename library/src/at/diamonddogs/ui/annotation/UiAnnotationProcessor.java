@@ -14,8 +14,18 @@
  * limitations under the License.
  */package at.diamonddogs.ui.annotation;
 
+/**
+ * This interface needs to be implemented by all classes that wish to process
+ * the Ui
+ */
 public interface UiAnnotationProcessor {
 
+	/**
+	 * Called whenever the Ui should be processed
+	 * 
+	 * @param o
+	 *            the {@link Object} to be processed
+	 */
 	public void process(Object o);
 
 }

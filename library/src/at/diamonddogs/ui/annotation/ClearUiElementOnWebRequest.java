@@ -19,7 +19,16 @@ import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
+import java.lang.reflect.Field;
 
+import android.widget.TextView;
+import at.diamonddogs.data.dataobjects.WebRequest;
+
+/**
+ * This annotation can be placed on all {@link TextView} {@link Field}s and will
+ * clear the content of the {@link TextView} when a {@link WebRequest} starts
+ * running
+ */
 @Target(ElementType.FIELD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface ClearUiElementOnWebRequest {

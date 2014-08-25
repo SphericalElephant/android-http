@@ -21,7 +21,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.view.View;
+import at.diamonddogs.data.dataobjects.WebRequest;
 
+/**
+ * This processor is used when {@link WebRequest}s stop running
+ */
 public class UiAnnotationNotRunningProcessor implements UiAnnotationProcessor {
 	private static final Logger LOGGER = LoggerFactory.getLogger(UiAnnotationNotRunningProcessor.class.getSimpleName());
 
