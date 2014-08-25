@@ -30,7 +30,7 @@
         <activity android:name="at.diamonddogs.example.http.activity.CachingExampleActivity" />
         <activity android:name="at.diamonddogs.example.http.activity.NonTimeCriticalExampleActivity" />
         <activity android:name="at.diamonddogs.example.http.activity.ImageLoadingExampleListActivity" />
-
+        <activity android:name="at.diamonddogs.example.http.activity.UiAnnotationExampleActivity" />
         <provider
             android:name="at.diamonddogs.contentprovider.CacheContentProvider"
             android:authorities="at.diamonddogs.example.contentprovider.cachecontentprovider"

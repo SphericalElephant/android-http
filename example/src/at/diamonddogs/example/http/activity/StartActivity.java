@@ -47,16 +47,18 @@ public class StartActivity extends Activity {
 		list = (ListView) findViewById(R.id.startactivity_listview);
 		adapter = new ExampleAdapter(this);
 		adapter.add(new Example("HttpExampleActivity",
-				"Explains how to issue, process and handle asynchronous and synchronous webrequests.", HttpExampleActivity.class));
+			"Explains how to issue, process and handle asynchronous and synchronous webrequests.", HttpExampleActivity.class));
 		adapter.add(new Example("HttpServiceAssisterExampleActivity", "Explains how to use the HttpServiceAssister",
-				HttpServiceAssisterExampleActivity.class));
+			HttpServiceAssisterExampleActivity.class));
 		adapter.add(new Example("HttpOrderedAsyncAssisiterExampleActivity",
-				"Shows how to send ordered, conditional, asynchronous Webrequests", HttpOrderedAsyncAssisiterExampleActivity.class));
+			"Shows how to send ordered, conditional, asynchronous Webrequests", HttpOrderedAsyncAssisiterExampleActivity.class));
 		adapter.add(new Example("CachingExampleActivity", "Demonstrates cached Webrequests", CachingExampleActivity.class));
 		adapter.add(new Example("NonTimeCriticalTasks", "Shows how to use the API that handles non time critical tasks",
-				NonTimeCriticalExampleActivity.class));
+			NonTimeCriticalExampleActivity.class));
 		adapter.add(new Example("ImageLoadingExampleListActivity", "Shows how to work with images in lists",
-				ImageLoadingExampleListActivity.class));
+			ImageLoadingExampleListActivity.class));
+		adapter.add(new Example("UIAnnotationExampleActivity",
+			"Demonstrates how android-http can modify the ui according to webrequest states", UiAnnotationExampleActivity.class));
 		list.setAdapter(adapter);
 		list.setOnItemClickListener(new OnItemClickListener() {
 
