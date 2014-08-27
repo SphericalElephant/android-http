@@ -13,12 +13,10 @@ import at.diamonddogs.exception.ProcessorExeception;
  * 
  * @param <CLASS>
  *            the input class that needs to be provided to the constructor
- * @param <OUTPUT>
- *            the output object type, which is linked to the <CLASS> parameter
  */
-public class SimpleXMLProcessor<CLASS extends Class<OUTPUT>, OUTPUT> extends DataProcessor<String, OUTPUT> {
+public class SimpleXMLProcessor<OUTPUT> extends DataProcessor<String, OUTPUT> {
 	private final Serializer serializer = new Persister();
-	private CLASS clazz;
+	private Class<OUTPUT> clazz;
 	protected final int processorId;
 
 	/**
@@ -29,7 +27,7 @@ public class SimpleXMLProcessor<CLASS extends Class<OUTPUT>, OUTPUT> extends Dat
 	 * @param processorId
 	 *            a app unique processorId to be used by this processor
 	 */
-	public SimpleXMLProcessor(CLASS clazz, int processorId) {
+	public SimpleXMLProcessor(Class<OUTPUT> clazz, int processorId) {
 		this.clazz = clazz;
 		this.processorId = processorId;
 	}

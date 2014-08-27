@@ -27,14 +27,12 @@ import com.google.gson.Gson;
  * 
  * @param <CLAZZ>
  *            the {@link Class} of the {@link Object} to be parsed
- * @param <OUTPUT>
- *            the output type
  */
-public class GsonProcessor<CLAZZ extends Class<OUTPUT>, OUTPUT> extends DataProcessor<String, OUTPUT> {
+public class GsonProcessor<OUTPUT> extends DataProcessor<String, OUTPUT> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GsonProcessor.class.getSimpleName());
 
 	protected final int processorId;
-	protected final CLAZZ clazz;
+	protected final Class<OUTPUT> clazz;
 	protected final Gson gson;
 
 	/**
@@ -45,7 +43,7 @@ public class GsonProcessor<CLAZZ extends Class<OUTPUT>, OUTPUT> extends DataProc
 	 * @param processorId
 	 *            a app unique processorId to be used by this processor
 	 */
-	public GsonProcessor(CLAZZ clazz, int processorId) {
+	public GsonProcessor(Class<OUTPUT> clazz, int processorId) {
 		this.clazz = clazz;
 		this.processorId = processorId;
 		this.gson = buildGson();
