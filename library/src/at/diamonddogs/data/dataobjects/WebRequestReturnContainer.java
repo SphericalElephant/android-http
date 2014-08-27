@@ -90,6 +90,16 @@ public final class WebRequestReturnContainer {
 		return payload;
 	}
 
+	/**
+	 * Not typesafe but convenient
+	 * 
+	 * @return the casted payload
+	 */
+	@SuppressWarnings("unchecked")
+	public <T> T getCastedPayload() {
+		return (T) payload;
+	}
+
 	@SuppressWarnings("javadoc")
 	public void setPayload(Object payload) {
 		this.payload = payload;
