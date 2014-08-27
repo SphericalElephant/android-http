@@ -42,6 +42,8 @@ public class WebRequestBuilder {
 	 */
 	private WebRequest webRequest;
 
+	private String baseUrl;
+
 	/**
 	 * This enum is an abstraction for read timeout durations. The exact
 	 * duration is controlled by the provided
@@ -84,11 +86,37 @@ public class WebRequestBuilder {
 	}
 
 	/**
+	 * Constructor with configuration option and baseUrl
+	 * 
+	 * @param configuration
+	 *            the {@link WebRequestBuilderConfiguration} to use when
+	 *            building {@link WebRequest}s
+	 * @param baseUrl
+	 *            the base url of the webservice
+	 */
+	public WebRequestBuilder(WebRequestBuilderConfiguration configuration, String baseUrl) {
+		this.configuration = configuration;
+		this.baseUrl = baseUrl;
+	}
+
+	/**
 	 * This constructor utilzes {@link WebRequestBuilderDefaultConfig} to
 	 * configure {@link WebRequest}s
 	 */
 	public WebRequestBuilder() {
 		this.configuration = new WebRequestBuilderDefaultConfig();
+	}
+
+	/**
+	 * This constructor utilzes {@link WebRequestBuilderDefaultConfig} to
+	 * configure {@link WebRequest}s
+	 * 
+	 * @param baseUrl
+	 *            the base url of the webserice
+	 */
+	public WebRequestBuilder(String baseUrl) {
+		this.configuration = new WebRequestBuilderDefaultConfig();
+		this.baseUrl = baseUrl;
 	}
 
 	/**
@@ -102,6 +130,9 @@ public class WebRequestBuilder {
 			throw new IllegalStateException("webRequest already initialized");
 		}
 		webRequest = new WebRequest();
+		if (baseUrl != null) {
+			webRequest.setUrl(baseUrl);
+		}
 		webRequest.setFollowRedirects(configuration.isFollowRedirectEnabled());
 		webRequest.setUseOfflineCache(configuration.isOfflineCachingEnabled());
 		webRequest.setCheckConnectivity(configuration.isConnectivityCheckEnabled());
@@ -274,6 +305,25 @@ public class WebRequestBuilder {
 	public WebRequestBuilder setCacheTime(long time) {
 		throwOnError();
 		webRequest.setCacheTime(time);
+		return this;
+	}
+
+	/**
+	 * Append path to the baseUrl of the specific request. Requires the user to
+	 * set a baseUrl using the correct constructor.
+	 * 
+	 * @param path
+	 *            the path to append
+	 * @return the {@link WebRequestBuilder} instance (allows chaining)
+	 * @throws NullPointerException
+	 *             if no baseUrl has been set
+	 */
+	public WebRequestBuilder appendToUrl(String path) {
+		if (baseUrl == null) {
+			throw new NullPointerException("No baseUrl set!");
+		}
+		String url = webRequest.getUrl().toString();
+		webRequest.setUrl(Uri.withAppendedPath(Uri.parse(url), path));
 		return this;
 	}
 
