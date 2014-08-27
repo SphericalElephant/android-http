@@ -7,19 +7,31 @@ import at.diamonddogs.exception.ProcessorExeception;
 
 /**
  * An XML processor that uses the SimpleXML framework
- * (http://simple.sourceforge.net/) to parse XML data.
+ * (http://simple.sourceforge.net/) to parse XML data.Due to the dynamic nature
+ * of this processor, users will have to provide a processorId to the
+ * constructor.
  * 
  * @param <CLASS>
  *            the input class that needs to be provided to the constructor
  * @param <OUTPUT>
  *            the output object type, which is linked to the <CLASS> parameter
  */
-public abstract class SimpleXMLProcessor<CLASS extends Class<OUTPUT>, OUTPUT> extends DataProcessor<String, OUTPUT> {
+public class SimpleXMLProcessor<CLASS extends Class<OUTPUT>, OUTPUT> extends DataProcessor<String, OUTPUT> {
 	private final Serializer serializer = new Persister();
 	private CLASS clazz;
+	protected final int processorId;
 
-	public SimpleXMLProcessor(CLASS clazz) {
+	/**
+	 * Constructor
+	 * 
+	 * @param clazz
+	 *            the class instance of the {@link Object} to be parsed
+	 * @param processorId
+	 *            a app unique processorId to be used by this processor
+	 */
+	public SimpleXMLProcessor(CLASS clazz, int processorId) {
 		this.clazz = clazz;
+		this.processorId = processorId;
 	}
 
 	@Override
@@ -34,5 +46,10 @@ public abstract class SimpleXMLProcessor<CLASS extends Class<OUTPUT>, OUTPUT> ex
 		} catch (Exception e) {
 			throw new ProcessorExeception(e);
 		}
+	}
+
+	@Override
+	public int getProcessorID() {
+		return this.processorId;
 	}
 }

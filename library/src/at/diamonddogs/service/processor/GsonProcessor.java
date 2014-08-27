@@ -20,16 +20,45 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
-public class GsonProcessor<CLAZZ extends Class<?>, OUTPUT> extends DataProcessor<String, OUTPUT> {
+/**
+ * This processor uses Gson (http://code.google.com/p/google-gson/) to parse
+ * pojos. Due to the dynamic nature of this processor, users will have to
+ * provide a processorId to the constructor.
+ * 
+ * @param <CLAZZ>
+ *            the {@link Class} of the {@link Object} to be parsed
+ * @param <OUTPUT>
+ *            the output type
+ */
+public class GsonProcessor<CLAZZ extends Class<OUTPUT>, OUTPUT> extends DataProcessor<String, OUTPUT> {
 	private static final Logger LOGGER = LoggerFactory.getLogger(GsonProcessor.class.getSimpleName());
 
 	protected final int processorId;
 	protected final CLAZZ clazz;
-	protected final Gson gson = new Gson();
+	protected final Gson gson;
 
+	/**
+	 * Constructor
+	 * 
+	 * @param clazz
+	 *            the class instance of the {@link Object} to be parsed
+	 * @param processorId
+	 *            a app unique processorId to be used by this processor
+	 */
 	public GsonProcessor(CLAZZ clazz, int processorId) {
 		this.clazz = clazz;
 		this.processorId = processorId;
+		this.gson = buildGson();
+	}
+
+	/**
+	 * Hook method to provide a specialized {@link Gson} instance, returns new
+	 * Gson() by default.
+	 * 
+	 * @return
+	 */
+	protected Gson buildGson() {
+		return new Gson();
 	}
 
 	@Override
