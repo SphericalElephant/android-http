@@ -127,8 +127,9 @@ public class ImageLoader {
 
 		@Override
 		public boolean handleMessage(Message msg) {
+			int httpStatusCode = ServiceProcessorMessageUtil.getHttpStatusCode(msg);
 			if (allowUserRetry
-				&& (!ServiceProcessorMessageUtil.isSuccessful(msg) || ServiceProcessorMessageUtil.getHttpStatusCode(msg) != HTTPStatus.HTTP_OK)) {
+				&& (!ServiceProcessorMessageUtil.isSuccessful(msg) || (httpStatusCode != HTTPStatus.HTTP_OK && httpStatusCode != -1))) {
 				final WebRequest oldWebRequest = ServiceProcessorMessageUtil
 					.getWebRequest(msg);
 				imageView.setScaleType(ScaleType.CENTER_INSIDE);
