@@ -133,7 +133,9 @@ public class ImageLoader {
 				final WebRequest oldWebRequest = ServiceProcessorMessageUtil
 					.getWebRequest(msg);
 				imageView.setScaleType(ScaleType.CENTER_INSIDE);
-				imageView.setImageResource(defaultImage);
+				if (defaultImage != -1) {
+					imageView.setImageResource(defaultImage);
+				}
 				imageView.setOnClickListener(new OnClickListener() {
 
 					@Override
