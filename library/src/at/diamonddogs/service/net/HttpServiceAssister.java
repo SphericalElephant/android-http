@@ -416,6 +416,98 @@ public class HttpServiceAssister {
 	}
 
 	/**
+	 * Executes an array of {@link WebRequest}s on the same {@link Thread} this
+	 * method is called. Beware that calling
+	 * {@link HttpService#runSynchronousWebRequest(WebRequest,DownloadProgressListener)}
+	 * on the main thread may cause ANR issues. The processor handling the
+	 * {@link WebRequest}s must be a {@link DataProcessor}, otherwise, an
+	 * exception will be thrown.
+	 * 
+	 * WARNING: Unlike {@link HttpService#runSynchronousWebRequest(WebRequest)},
+	 * this method must be executed from a thread that is not the Main (UI)
+	 * thread. Calling this method from the Main (UI) thread will always result
+	 * in a timeout! This behaviour is due to technical constraints related to
+	 * service binding.
+	 * 
+	 * @param webRequests
+	 *            an array of {@link WebRequest}s to run
+	 * @param serviceProcessor
+	 *            the processor that handles the {@link WebRequest}s
+	 * @return The object created by the
+	 *         {@link DataProcessor#obtainDataObjectFromWebReply(ReplyAdapter)}
+	 *         method of the {@link DataProcessor} registered for this request,
+	 *         or <code>null</code> if the request failed.
+	 */
+	public WebRequestReturnContainer[] runSynchronousWebRequests(WebRequest[] webRequests, ServiceProcessor<?> serviceProcessor) {
+		prepareForSyncRequest(serviceProcessor);
+		return httpService.runSynchronousWebRequests(webRequests);
+	}
+
+	/**
+	 * Executes an array of {@link WebRequest}s on the same {@link Thread} this
+	 * method is called. Beware that calling
+	 * {@link HttpService#runSynchronousWebRequest(WebRequest,DownloadProgressListener)}
+	 * on the main thread may cause ANR issues. The processor handling the
+	 * {@link WebRequest}s must be a {@link DataProcessor}, otherwise, an
+	 * exception will be thrown.
+	 * 
+	 * WARNING: Unlike {@link HttpService#runSynchronousWebRequest(WebRequest)},
+	 * this method must be executed from a thread that is not the Main (UI)
+	 * thread. Calling this method from the Main (UI) thread will always result
+	 * in a timeout! This behaviour is due to technical constraints related to
+	 * service binding.
+	 * 
+	 * @param webRequests
+	 *            an array of {@link WebRequest}s to run
+	 * @param serviceProcessor
+	 *            the processor that handles the {@link WebRequest}s
+	 * @param downloadProgressListener
+	 *            a progress listener that will be used for all
+	 *            {@link WebRequest}s
+	 * @return The object created by the
+	 *         {@link DataProcessor#obtainDataObjectFromWebReply(ReplyAdapter)}
+	 *         method of the {@link DataProcessor} registered for this request,
+	 *         or <code>null</code> if the request failed.
+	 */
+	public WebRequestReturnContainer[] runSynchronousWebRequests(WebRequest[] webRequests, DownloadProgressListener progressListener,
+		ServiceProcessor<?> serviceProcessor) {
+		prepareForSyncRequest(serviceProcessor);
+		return httpService.runSynchronousWebRequests(webRequests, progressListener);
+	}
+
+	/**
+	 * Executes an array of {@link WebRequest}s on the same {@link Thread} this
+	 * method is called. Beware that calling
+	 * {@link HttpService#runSynchronousWebRequest(WebRequest,DownloadProgressListener)}
+	 * on the main thread may cause ANR issues. The processor handling the
+	 * {@link WebRequest}s must be a {@link DataProcessor}, otherwise, an
+	 * exception will be thrown.
+	 * 
+	 * WARNING: Unlike {@link HttpService#runSynchronousWebRequest(WebRequest)},
+	 * this method must be executed from a thread that is not the Main (UI)
+	 * thread. Calling this method from the Main (UI) thread will always result
+	 * in a timeout! This behaviour is due to technical constraints related to
+	 * service binding.
+	 * 
+	 * @param webRequests
+	 *            an array of {@link WebRequest}s to run
+	 * @param serviceProcessor
+	 *            the processor that handles the {@link WebRequest}s
+	 * @param downloadProgressListener
+	 *            an array of {@link DownloadProgressListener} that will be used
+	 *            for the corresponding {@link WebRequest}
+	 * @return The object created by the
+	 *         {@link DataProcessor#obtainDataObjectFromWebReply(ReplyAdapter)}
+	 *         method of the {@link DataProcessor} registered for this request,
+	 *         or <code>null</code> if the request failed.
+	 */
+	public WebRequestReturnContainer[] runSynchronousWebRequests(WebRequest[] webRequests, DownloadProgressListener[] progressListeners,
+		ServiceProcessor<?> serviceProcessor) {
+		prepareForSyncRequest(serviceProcessor);
+		return httpService.runSynchronousWebRequests(webRequests, progressListeners);
+	}
+
+	/**
 	 * This method should be used to check if synchronous {@link WebRequest} can
 	 * be executed without causing a service binding timeout. Calls to
 	 * {@link HttpServiceAssister#runSynchronousWebRequest(WebRequest, ServiceProcessor)}
