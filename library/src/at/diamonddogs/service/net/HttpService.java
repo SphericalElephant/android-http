@@ -22,8 +22,11 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -439,7 +442,6 @@ public class HttpService extends Service implements WebClientReplyListener {
 			} else {
 				ret[i] = runSynchronousWebRequestFuture(webRequests[i], progressListeners[i]);
 			}
-
 		}
 		return ret;
 	}
@@ -697,7 +699,47 @@ public class HttpService extends Service implements WebClientReplyListener {
 			}
 			ret = workerQueue.<ReplyAdapter> runCancelableTask(client);
 		}
-		return ret;
+		return new HttpServiceFuture<ReplyAdapter>(webRequest, ret);
+	}
+
+	private class HttpServiceFuture<V> implements Future<V> {
+		private Future<V> future;
+		private WebRequest wr;
+
+		public HttpServiceFuture(WebRequest wr, Future<V> future) {
+			this.wr = wr;
+			this.future = future;
+		}
+
+		@Override
+		public boolean cancel(boolean mayInterruptIfRunning) {
+			return future.cancel(mayInterruptIfRunning);
+		}
+
+		@Override
+		public boolean isCancelled() {
+			return future.isCancelled();
+		}
+
+		@Override
+		public boolean isDone() {
+			return future.isDone();
+		}
+
+		@Override
+		public V get() throws InterruptedException, ExecutionException {
+			V ret = future.get();
+			WebRequestMap.getInstance(HttpService.this).remove(wr.getId());
+			return ret;
+		}
+
+		@Override
+		public V get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+			V ret = future.get(timeout, unit);
+			WebRequestMap.getInstance(HttpService.this).remove(wr.getId());
+			return ret;
+		}
+
 	}
 
 	/**
