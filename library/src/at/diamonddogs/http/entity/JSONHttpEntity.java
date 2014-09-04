@@ -26,6 +26,20 @@ import org.json.JSONObject;
  * for you.
  */
 public class JSONHttpEntity extends StringEntity {
+	public JSONHttpEntity(JSONObject input, String contentType) throws UnsupportedEncodingException {
+		this(input.toString());
+		setContentType(contentType);
+	}
+
+	public JSONHttpEntity(JSONArray input, String contentType) throws UnsupportedEncodingException {
+		super(input.toString());
+		setContentType(contentType);
+	}
+
+	public JSONHttpEntity(String s, String contentType) throws UnsupportedEncodingException {
+		super(s);
+		setContentType(contentType);
+	}
 
 	public JSONHttpEntity(JSONObject input) throws UnsupportedEncodingException {
 		this(input.toString());
@@ -39,11 +53,6 @@ public class JSONHttpEntity extends StringEntity {
 
 	public JSONHttpEntity(String s) throws UnsupportedEncodingException {
 		super(s);
-		setContentType("application/json");
-	}
-
-	private JSONHttpEntity(String s, String charset) throws UnsupportedEncodingException {
-		super(s, charset);
 		setContentType("application/json");
 	}
 
