@@ -93,6 +93,7 @@ public class WebRequestMap {
 	 * @see HashMap#put(Object, Object)
 	 */
 	public WebRequestFutureContainer put(String key, WebRequestFutureContainer value) {
+		LOGGER.info("Adding To WebRequestMap " + key, new Throwable());
 		WebRequestFutureContainer ret = webRequests.put(key, value);
 		sendActiveWebRequestsIntent();
 		return ret;
@@ -106,6 +107,7 @@ public class WebRequestMap {
 	 * @see HashMap#put(Object, Object)
 	 */
 	public WebRequestFutureContainer remove(String key) {
+		LOGGER.info("Removing From WebRequestMap " + key, new Throwable());
 		WebRequestFutureContainer ret = webRequests.remove(key);
 		sendActiveWebRequestsIntent();
 		return ret;

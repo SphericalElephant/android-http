@@ -208,7 +208,11 @@ public class HttpService extends Service implements WebClientReplyListener {
 			public void run() {
 				Future<?> future = getWebRequestTask(webRequest, progressListener, true);
 				if (future != null) {
+					LOGGER.info("Task not null, adding to WebRequestMap");
 					WebRequestMap.getInstance(HttpService.this).put(webRequest.getId(), new WebRequestFutureContainer(webRequest, future));
+				} else {
+					LOGGER.info("Task null, removing from WebRequestMap");
+					WebRequestMap.getInstance(HttpService.this).remove(webRequest.getId());
 				}
 			}
 		};
@@ -324,6 +328,7 @@ public class HttpService extends Service implements WebClientReplyListener {
 				} else {
 					ret.setSuccessful(false);
 				}
+				WebRequestMap.getInstance(this).remove(webRequest.getId());
 			} else {
 				if (cachedObject != null) {
 					ret.setPayload(synchronousProcessor.obtainDataObjectFromCachedObject(this, webRequest, cachedObject));
@@ -614,7 +619,7 @@ public class HttpService extends Service implements WebClientReplyListener {
 
 	}
 
-	private void dispatchCachedObjectToProcessor(CachedObject cachedObject, Request webRequest) {
+	private void dispatchCachedObjectToProcessor(CachedObject cachedObject, WebRequest webRequest) {
 		if (!workerQueue.isShutDown()) {
 			getProcessor(webRequest).processCachedObject(cachedObject, getHandler(webRequest), webRequest);
 		} else {
@@ -672,7 +677,8 @@ public class HttpService extends Service implements WebClientReplyListener {
 		}
 	}
 
-	private Future<ReplyAdapter> getWebRequestTask(WebRequest webRequest, DownloadProgressListener downloadProgressListener, boolean async) {
+	private HttpServiceFuture<ReplyAdapter> getWebRequestTask(WebRequest webRequest, DownloadProgressListener downloadProgressListener,
+		boolean async) {
 		CacheManager cm = CacheManager.getInstance();
 		Future<ReplyAdapter> ret = null;
 		WebClient client = null;
@@ -692,19 +698,20 @@ public class HttpService extends Service implements WebClientReplyListener {
 				}
 			}
 		} catch (Throwable tr) {
-			LOGGER.debug("No cached objects available for: " + webRequest.getUrl());
+			LOGGER.debug("No cached objects available for: " + webRequest.getUrl(), tr);
 			client = getNewWebClient(webRequest, downloadProgressListener);
 			if (!async) {
 				client.setListener(null);
 			}
 			ret = workerQueue.<ReplyAdapter> runCancelableTask(client);
 		}
-		return new HttpServiceFuture<ReplyAdapter>(webRequest, ret);
+		return ret == null ? null : new HttpServiceFuture<ReplyAdapter>(webRequest, ret);
 	}
 
 	private class HttpServiceFuture<V> implements Future<V> {
 		private Future<V> future;
 		private WebRequest wr;
+		private boolean fromCache;
 
 		public HttpServiceFuture(WebRequest wr, Future<V> future) {
 			this.wr = wr;
@@ -738,6 +745,11 @@ public class HttpService extends Service implements WebClientReplyListener {
 			V ret = future.get(timeout, unit);
 			WebRequestMap.getInstance(HttpService.this).remove(wr.getId());
 			return ret;
+		}
+
+		public HttpServiceFuture<V> setFromCache(boolean fromCache) {
+			this.fromCache = fromCache;
+			return this;
 		}
 
 	}
