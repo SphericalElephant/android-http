@@ -114,7 +114,9 @@ public class ImageLoader {
 		public AllowRetryCallback(ImageView imageView, OnClickListener onClickListener, ImageProcessHandler handler, int defaultImage,
 			ScaleType scaleType) {
 			this.imageView = imageView;
-			this.imageView.setImageResource(defaultImage);
+			if (defaultImage != -1) {
+				this.imageView.setImageResource(defaultImage);
+			}
 			this.oldScaleType = scaleType;
 			this.wasImageViewClickable = this.imageView.isClickable();
 			this.wasImageViewFocusable = this.imageView.isFocusable();
