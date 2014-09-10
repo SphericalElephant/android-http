@@ -20,8 +20,9 @@ The framework is designed to send, receive, process and publish webrequests and 
 * Bundling and prioritization of non time critical web requests in order to save battery life
 
 ## Planned
-* Volley Support
+* Service to save and repeat failed web requests
 * REST assister
+* Volley Support
 * Chaining multiple processors
 * OAuth 2.0
 * Dynamically generated processor ids, deprecate getProcessorId()
