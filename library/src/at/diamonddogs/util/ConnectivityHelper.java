@@ -74,18 +74,29 @@ public class ConnectivityHelper {
 
 	private boolean isConnected(WebRequest wr) {
 		if (wr.isCheckConnectivity()) {
-			if (!hasAccessNetworkStatePermission()) {
-				// @formatter:off
-				LOGGER.warn("WebRequest (" + wr.getUrl() + ", " + wr.getId() + ") requested a connectivity check, but the caller lacks the required permission (ACCESS_NETWORK_STATE). Returning true");
-				// @formatter:on
-				return true;
-			}
-			NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-			return networkInfo == null ? false : networkInfo.isConnected();
+			return hasConnection();
 		} else {
 			LOGGER.info("WebRequest does not require connectivity check, returning true");
 			return true;
 		}
+	}
+
+	/**
+	 * Simple connectivity check
+	 * 
+	 * @return <code>true</code> if the device is connected or if the app lacks
+	 *         permissions to check the connectivity, <code>false</code>
+	 *         otherwise.
+	 */
+	public boolean hasConnection() {
+		if (!hasAccessNetworkStatePermission()) {
+			// @formatter:off
+			LOGGER.warn("Permissions Missing!");
+			// @formatter:on
+			return true;
+		}
+		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+		return networkInfo == null ? false : networkInfo.isConnected();
 	}
 
 	private boolean isPingAble(WebRequest wr) {

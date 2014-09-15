@@ -35,7 +35,10 @@ import at.diamonddogs.data.dataobjects.WebRequestFutureContainer;
  * {@link WebRequest} are added or removed.
  */
 public class WebRequestMap {
+	private static final boolean VERBOSE = false;
+
 	private static final Logger LOGGER = LoggerFactory.getLogger(WebRequestMap.class.getSimpleName());
+
 	/**
 	 * The action that is used to sinal {@link BroadcastReceiver}s every time a
 	 * {@link WebRequest} has been started or finished
@@ -93,7 +96,9 @@ public class WebRequestMap {
 	 * @see HashMap#put(Object, Object)
 	 */
 	public WebRequestFutureContainer put(String key, WebRequestFutureContainer value) {
-		LOGGER.debug("Adding To WebRequestMap " + key, new Throwable());
+		if (VERBOSE) {
+			LOGGER.debug("Adding To WebRequestMap " + key, new Throwable());
+		}
 		WebRequestFutureContainer ret = webRequests.put(key, value);
 		sendActiveWebRequestsIntent();
 		return ret;
@@ -107,7 +112,9 @@ public class WebRequestMap {
 	 * @see HashMap#put(Object, Object)
 	 */
 	public WebRequestFutureContainer remove(String key) {
-		LOGGER.debug("Removing From WebRequestMap " + key, new Throwable());
+		if (VERBOSE) {
+			LOGGER.debug("Removing From WebRequestMap " + key, new Throwable());
+		}
 		WebRequestFutureContainer ret = webRequests.remove(key);
 		sendActiveWebRequestsIntent();
 		return ret;
