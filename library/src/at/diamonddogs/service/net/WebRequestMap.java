@@ -93,7 +93,7 @@ public class WebRequestMap {
 	 * @see HashMap#put(Object, Object)
 	 */
 	public WebRequestFutureContainer put(String key, WebRequestFutureContainer value) {
-		LOGGER.info("Adding To WebRequestMap " + key, new Throwable());
+		LOGGER.debug("Adding To WebRequestMap " + key, new Throwable());
 		WebRequestFutureContainer ret = webRequests.put(key, value);
 		sendActiveWebRequestsIntent();
 		return ret;
@@ -107,7 +107,7 @@ public class WebRequestMap {
 	 * @see HashMap#put(Object, Object)
 	 */
 	public WebRequestFutureContainer remove(String key) {
-		LOGGER.info("Removing From WebRequestMap " + key, new Throwable());
+		LOGGER.debug("Removing From WebRequestMap " + key, new Throwable());
 		WebRequestFutureContainer ret = webRequests.remove(key);
 		sendActiveWebRequestsIntent();
 		return ret;
@@ -182,7 +182,7 @@ public class WebRequestMap {
 	}
 
 	private void sendActiveWebRequestsIntent() {
-		LOGGER.info("Sending Active Webrequests Broadcast: " + webRequests.size());
+		LOGGER.debug("Sending Active Webrequests Broadcast: " + webRequests.size());
 		Intent i = new Intent(ACTION_ACTIVE_WEBREQUESTS);
 		i.putExtra(INTENT_EXTRA_WEBREQUEST_COUNT, webRequests.size());
 		LocalBroadcastManager.getInstance(context).sendBroadcast(i);
