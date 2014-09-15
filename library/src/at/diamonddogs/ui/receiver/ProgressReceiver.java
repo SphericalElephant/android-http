@@ -35,10 +35,13 @@ import at.diamonddogs.ui.annotation.UiAnnotationRunningProcessor;
 public class ProgressReceiver extends BroadcastReceiver {
 	private static final Logger LOGGER = LoggerFactory.getLogger(ProgressReceiver.class.getSimpleName());
 
+	private static final int PROGRESS_THRESHOLD_MS = 1000;
+
 	private IndeterminateProgressControl indeterminateProgressControl;
 	private final UiAnnotationRunningProcessor uiAnnotationRunningProcessor = new UiAnnotationRunningProcessor();
 	private final UiAnnotationNotRunningProcessor uiAnnotationNotRunningProcessor = new UiAnnotationNotRunningProcessor();
 	private Handler handler;
+	private Runnable currentRunnable;
 
 	public ProgressReceiver(IndeterminateProgressControl indeterminateProgressControl) {
 		super();
@@ -51,12 +54,17 @@ public class ProgressReceiver extends BroadcastReceiver {
 		int activeWebRequests = intent.getIntExtra(WebRequestMap.INTENT_EXTRA_WEBREQUEST_COUNT, -1);
 		LOGGER.info("Active Request: " + activeWebRequests);
 
+		if (currentRunnable != null) {
+			handler.removeCallbacks(currentRunnable);
+		}
+
 		if (activeWebRequests > 0) {
-			handler.post(new Runnable() {
+			handler.post(currentRunnable = new Runnable() {
 
 				@Override
 				public void run() {
 					try {
+						currentRunnable = null;
 						LOGGER.info("Attempting to show progress");
 						if (!indeterminateProgressControl.isIndeterminateProgressShowing()) {
 							indeterminateProgressControl.showIndeterminateProgress();
@@ -69,12 +77,13 @@ public class ProgressReceiver extends BroadcastReceiver {
 			});
 
 		} else {
-			handler.post(new Runnable() {
+			handler.postDelayed(currentRunnable = new Runnable() {
 
 				@Override
 				public void run() {
 					try {
 						LOGGER.info("Attempting to hide progress");
+						currentRunnable = null;
 						if (indeterminateProgressControl.isIndeterminateProgressShowing()) {
 							indeterminateProgressControl.hideIndeterminateProgress();
 							indeterminateProgressControl.processUiAnnotations(uiAnnotationNotRunningProcessor);
@@ -83,7 +92,7 @@ public class ProgressReceiver extends BroadcastReceiver {
 						LOGGER.error("Error while running UI processing.", tr);
 					}
 				}
-			});
+			}, PROGRESS_THRESHOLD_MS);
 		}
 	}
 }
