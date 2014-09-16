@@ -20,6 +20,7 @@ The framework is designed to send, receive, process and publish webrequests and 
 * Bundling and prioritization of non time critical web requests in order to save battery life
 
 ## Planned
+* Stream Processor
 * Service to save and repeat failed web requests
 * REST assister
 * Volley Support
