@@ -40,38 +40,42 @@ public class JSONRequestAdapter implements WebRequestAdapter<WebRequest> {
 	private final Gson gson;
 
 	public JSONRequestAdapter(WebRequest webRequest, JSONObject input) throws UnsupportedEncodingException {
-		gson = new Gson();
+		gson = getGsonBuilder().create();
 		this.webRequest = webRequest;
 		JSONHttpEntity e = new JSONHttpEntity(input);
 		this.webRequest.setHttpEntity(e);
 	}
 
 	public JSONRequestAdapter(WebRequest webRequest, JSONArray input) throws UnsupportedEncodingException {
-		gson = new Gson();
+		gson = getGsonBuilder().create();
 		this.webRequest = webRequest;
 		JSONHttpEntity e = new JSONHttpEntity(input);
 		this.webRequest.setHttpEntity(e);
 	}
 
 	public JSONRequestAdapter(WebRequest webRequest, String input) throws UnsupportedEncodingException {
-		gson = new Gson();
+		gson = getGsonBuilder().create();
 		this.webRequest = webRequest;
 		JSONHttpEntity e = new JSONHttpEntity(input);
 		this.webRequest.setHttpEntity(e);
 	}
 
 	public JSONRequestAdapter(WebRequest webRequest, Object input) throws UnsupportedEncodingException {
-		gson = new Gson();
+		gson = getGsonBuilder().create();
 		this.webRequest = webRequest;
 		JSONHttpEntity e = new JSONHttpEntity(gson.toJson(input));
 		this.webRequest.setHttpEntity(e);
 	}
 
 	public JSONRequestAdapter(WebRequest webRequest, Object input, ExclusionStrategy excludeStrategy) throws UnsupportedEncodingException {
-		gson = new GsonBuilder().setExclusionStrategies(excludeStrategy).create();
+		gson = getGsonBuilder().setExclusionStrategies(excludeStrategy).create();
 		this.webRequest = webRequest;
 		JSONHttpEntity e = new JSONHttpEntity(gson.toJson(input));
 		this.webRequest.setHttpEntity(e);
+	}
+
+	protected GsonBuilder getGsonBuilder() {
+		return new GsonBuilder();
 	}
 
 	/**

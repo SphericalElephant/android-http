@@ -29,6 +29,7 @@ import com.google.gson.Gson;
  *            the {@link Class} of the {@link Object} to be parsed
  */
 public class GsonProcessor<OUTPUT> extends DataProcessor<String, OUTPUT> {
+	private static final boolean VERBOSE = true;
 	private static final Logger LOGGER = LoggerFactory.getLogger(GsonProcessor.class.getSimpleName());
 
 	protected final int processorId;
@@ -66,7 +67,9 @@ public class GsonProcessor<OUTPUT> extends DataProcessor<String, OUTPUT> {
 
 	@Override
 	protected OUTPUT parse(String inputObject) {
-		LOGGER.info("Json String: " + inputObject);
+		if (VERBOSE) {
+			LOGGER.info("Json String: " + inputObject);
+		}
 		return gson.fromJson(inputObject, clazz);
 	}
 
