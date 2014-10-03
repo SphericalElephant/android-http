@@ -174,6 +174,7 @@ public class HttpService extends Service implements WebClientReplyListener {
 	public WebRequestReturnContainer runWebRequest(final Handler handler, final WebRequest webRequest,
 		final DownloadProgressListener progressListener) {
 		WebRequestReturnContainer ret = new WebRequestReturnContainer();
+		ret.setProcessorId(webRequest.getProcessorId());
 		if (webRequest == null) {
 			throw new IllegalArgumentException("webRequest may not be null");
 		}
@@ -317,6 +318,7 @@ public class HttpService extends Service implements WebClientReplyListener {
 	public WebRequestReturnContainer runSynchronousWebRequest(final WebRequest webRequest, final DownloadProgressListener progressListener) {
 		SynchronousProcessor<?> synchronousProcessor = (SynchronousProcessor<?>) registeredProcessors.get(webRequest.getProcessorId());
 		WebRequestReturnContainer ret = new WebRequestReturnContainer();
+		ret.setProcessorId(webRequest.getProcessorId());
 		ret.setId(webRequest.getId());
 		ret.setSuccessful(true);
 		try {

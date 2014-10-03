@@ -26,6 +26,12 @@ import java.util.Map;
  * capable of running {@link WebRequest}s.
  */
 public final class WebRequestReturnContainer {
+
+	/**
+	 * The id of the processor that has been used to create the payload
+	 */
+	private int processorId;
+
 	/**
 	 * A flag indiciating the success of an operation
 	 */
@@ -63,6 +69,16 @@ public final class WebRequestReturnContainer {
 
 	public WebRequestReturnContainer() {
 
+	}
+
+	@SuppressWarnings("javadoc")
+	public int getProcessorId() {
+		return processorId;
+	}
+
+	@SuppressWarnings("javadoc")
+	public void setProcessorId(int processorId) {
+		this.processorId = processorId;
 	}
 
 	@SuppressWarnings("javadoc")
