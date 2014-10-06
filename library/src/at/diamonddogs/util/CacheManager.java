@@ -240,14 +240,19 @@ public class CacheManager {
 		do {
 			dbaci.setDataObject(cursor);
 			CacheInformation cacheInfo = dbaci.getDataObject();
+			String filePathString = cacheInfo.getFilePath() + File.separator + cacheInfo.getFileName();
+			LOGGER.debug("Checking if " + filePathString + " needs to be deleted");
+
 			long creationTimeStamp = cacheInfo.getCreationTimeStamp();
 			long cacheTime = cacheInfo.getCacheTime();
 
 			if (fileExpired(creationTimeStamp, cacheTime) && (cacheTime != CacheInformation.CACHE_FOREVER)) {
 				String fileName = cacheInfo.getFileName();
 				File f = new File(cacheInfo.getFilePath(), fileName);
+				long len = f.length();
 				f.delete();
 				dbaci.delete(c);
+				LOGGER.debug(filePathString + "deleted from cache! Freed " + len + " bytes");
 			}
 		} while (cursor.moveToNext());
 
