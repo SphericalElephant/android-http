@@ -208,7 +208,7 @@ public class CacheManager {
 			return null;
 		} else {
 			LOGGER.info("Obtaining file from Cache. Expired: " + fileExpired(creationTimeStamp, cacheTime) + " File Exists: " + f.exists()
-					+ " UseOfflineCache: " + ci.isUseOfflineCache() + " Connectivity: " + connected);
+				+ " UseOfflineCache: " + ci.isUseOfflineCache() + " Connectivity: " + connected);
 			try {
 				byte[] buffer = new byte[(int) f.length()];
 				FileInputStream fis;
@@ -228,8 +228,6 @@ public class CacheManager {
 	 * 
 	 * @param c
 	 *            a {@link Context}
-	 * @return <code>true</code> if the file cache was cleaned successfully,
-	 *         <code>false</code> otherwise
 	 */
 	public void cleanExpired(Context c) {
 		Cursor cursor = c.getContentResolver().query(CacheContentProvider.CONTENT_URI, null, null, null, null);
