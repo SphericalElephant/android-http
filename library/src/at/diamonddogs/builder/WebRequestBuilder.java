@@ -126,10 +126,17 @@ public class WebRequestBuilder {
 	 * @return the {@link WebRequestBuilder} instance (allows chaining)
 	 */
 	public WebRequestBuilder newWebRequest() {
+		return newWebRequest(new WebRequest());
+	}
+
+	/**
+	 * Configures a {@link WebRequest}
+	 */
+	public WebRequestBuilder newWebRequest(WebRequest wr) {
 		if (webRequest != null) {
 			throw new IllegalStateException("webRequest already initialized");
 		}
-		webRequest = new WebRequest();
+		webRequest = wr;
 		if (baseUrl != null) {
 			webRequest.setUrl(baseUrl);
 		}

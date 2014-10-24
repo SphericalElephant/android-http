@@ -26,29 +26,38 @@ import org.json.JSONObject;
  * for you.
  */
 public class JSONHttpEntity extends StringEntity {
-	public JSONHttpEntity(JSONObject input, String contentType) throws UnsupportedEncodingException {
-		this(input.toString());
+
+	public JSONHttpEntity(JSONObject input, String contentType, String charset) throws UnsupportedEncodingException {
+		this(input.toString(), contentType, charset);
+	}
+
+	public JSONHttpEntity(JSONArray input, String contentType, String charset) throws UnsupportedEncodingException {
+		this(input.toString(), contentType, charset);
+	}
+
+	public JSONHttpEntity(String s, String contentType, String charset) throws UnsupportedEncodingException {
+		super(s, charset);
 		setContentType(contentType);
+	}
+
+	public JSONHttpEntity(JSONObject input, String contentType) throws UnsupportedEncodingException {
+		this(input, contentType, null);
 	}
 
 	public JSONHttpEntity(JSONArray input, String contentType) throws UnsupportedEncodingException {
-		super(input.toString());
-		setContentType(contentType);
+		this(input, contentType, null);
 	}
 
 	public JSONHttpEntity(String s, String contentType) throws UnsupportedEncodingException {
-		super(s);
-		setContentType(contentType);
+		this(s, contentType, null);
 	}
 
 	public JSONHttpEntity(JSONObject input) throws UnsupportedEncodingException {
 		this(input.toString());
-		setContentType("application/json");
 	}
 
 	public JSONHttpEntity(JSONArray input) throws UnsupportedEncodingException {
-		super(input.toString());
-		setContentType("application/json");
+		this(input.toString());
 	}
 
 	public JSONHttpEntity(String s) throws UnsupportedEncodingException {

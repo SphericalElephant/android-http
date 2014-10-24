@@ -33,8 +33,10 @@ import com.google.gson.GsonBuilder;
  * Wraps a usual {@link WebRequest} with the required data to send a JSON
  * {@link WebRequest}.
  * 
+ * @deprecated use {@link JSONWebRequest}, no support for encoding
  * @see {@link JSONWebRequest}
  */
+@Deprecated
 public class JSONRequestAdapter implements WebRequestAdapter<WebRequest> {
 	private final WebRequest webRequest;
 	private final Gson gson;

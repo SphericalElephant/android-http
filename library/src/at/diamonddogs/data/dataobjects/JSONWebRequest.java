@@ -31,6 +31,46 @@ public class JSONWebRequest<T> extends WebRequest {
 
 	private final Gson gson;
 
+	public JSONWebRequest(T data, String charset) {
+		gson = new Gson();
+		try {
+			JSONHttpEntity e = new JSONHttpEntity(gson.toJson(data), "application/json", charset);
+			setHttpEntity(e);
+		} catch (Throwable tr) {
+			throw new RuntimeException(tr);
+		}
+	}
+
+	public JSONWebRequest(T data, String contentType, String charset) {
+		gson = new Gson();
+		try {
+			JSONHttpEntity e = new JSONHttpEntity(gson.toJson(data), contentType, charset);
+			setHttpEntity(e);
+		} catch (Throwable tr) {
+			throw new RuntimeException(tr);
+		}
+	}
+
+	public JSONWebRequest(T data, ExclusionStrategy excludeStrategy, String charset) {
+		gson = new GsonBuilder().setExclusionStrategies(excludeStrategy).create();
+		try {
+			JSONHttpEntity e = new JSONHttpEntity(gson.toJson(data), "application/json", charset);
+			setHttpEntity(e);
+		} catch (Throwable tr) {
+			throw new RuntimeException(tr);
+		}
+	}
+
+	public JSONWebRequest(T data, ExclusionStrategy excludeStrategy, String contentType, String charset) {
+		gson = new GsonBuilder().setExclusionStrategies(excludeStrategy).create();
+		try {
+			JSONHttpEntity e = new JSONHttpEntity(gson.toJson(data), contentType, charset);
+			setHttpEntity(e);
+		} catch (Throwable tr) {
+			throw new RuntimeException(tr);
+		}
+	}
+
 	public JSONWebRequest(T data) {
 		gson = new Gson();
 		try {
