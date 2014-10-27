@@ -151,6 +151,21 @@ public class CacheManager {
 	}
 
 	/**
+	 * Evics a single item from the memory cache
+	 * 
+	 * @param fileUrl
+	 *            the fileUrl that has been used to add the item to the cache
+	 */
+	public boolean clearMemoryCache(String fileUrl) {
+		if (cache.get(fileUrl) == null) {
+			return false;
+		} else {
+			cache.remove(fileUrl);
+			return true;
+		}
+	}
+
+	/**
 	 * Evicts all items with a specific tag from the memory cache
 	 * 
 	 * @param tag
