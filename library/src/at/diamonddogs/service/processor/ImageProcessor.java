@@ -27,6 +27,8 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -231,6 +233,29 @@ public class ImageProcessor extends DataProcessor<Bitmap, Bitmap> {
 			return file.getAbsolutePath();
 		}
 		return null;
+	}
+
+	/**
+	 * Helper method that recycles a bitmap and takes the cache's LRU into
+	 * account
+	 * 
+	 * @param v
+	 *            the {@link ImageView} whose {@link BitmapDrawable} to recycle
+	 */
+	public static void recycleBitmap(ImageView v) {
+		Drawable d = v.getDrawable();
+		if (d instanceof BitmapDrawable) {
+			Bitmap bm = ((BitmapDrawable) d).getBitmap();
+			String url = (String) v.getTag();
+			LOGGER.info("REC: Recycling image!");
+			if (!CacheManager.getInstance().clearMemoryCache(url)) {
+				LOGGER.warn("REC: Could not evict image from cache! " + url + " " + bm);
+			} else {
+				LOGGER.info("REC: Image evicted " + url);
+			}
+			v.setImageBitmap(null);
+			bm.recycle();
+		}
 	}
 
 	@Override
