@@ -252,9 +252,9 @@ public class ImageProcessor extends DataProcessor<Bitmap, Bitmap> {
 				LOGGER.warn("REC: Could not evict image from cache! " + url + " " + bm);
 			} else {
 				LOGGER.info("REC: Image evicted " + url);
+				v.setImageBitmap(null);
+				bm.recycle();
 			}
-			v.setImageBitmap(null);
-			bm.recycle();
 		}
 	}
 
