@@ -174,10 +174,10 @@ public class HttpService extends Service implements WebClientReplyListener {
 	public WebRequestReturnContainer runWebRequest(final Handler handler, final WebRequest webRequest,
 		final DownloadProgressListener progressListener) {
 		WebRequestReturnContainer ret = new WebRequestReturnContainer();
-		ret.setProcessorId(webRequest.getProcessorId());
 		if (webRequest == null) {
 			throw new IllegalArgumentException("webRequest may not be null");
 		}
+		ret.setProcessorId(webRequest.getProcessorId());
 		ret.setId(webRequest.getId());
 		ret.setPayload(null); // we have no payload at this point!
 		ret.setSuccessful(true);
