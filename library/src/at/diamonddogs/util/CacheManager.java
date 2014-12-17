@@ -239,6 +239,32 @@ public class CacheManager {
 	}
 
 	/**
+	 * Delete all cached files
+	 * 
+	 * @param c
+	 *            a {@link Context}
+	 */
+	public void clean(Context c) {
+		Cursor cursor = c.getContentResolver().query(CacheContentProvider.CONTENT_URI, null, null, null, null);
+		if (!Utils.checkCursor(cursor)) {
+			return;
+		}
+		cursor.moveToFirst();
+		DataBaseAdapterCacheInformation dbaci = new DataBaseAdapterCacheInformation();
+		do {
+			dbaci.setDataObject(cursor);
+			CacheInformation cacheInfo = dbaci.getDataObject();
+			File f = new File(cacheInfo.getFilePath(), cacheInfo.getFileName());
+			long len = f.length();
+			LOGGER.debug(f.getAbsolutePath() + "deleted from cache! Freed " + len + " bytes");
+			f.delete();
+			dbaci.delete(c);
+		} while (cursor.moveToNext());
+
+		cursor.close();
+	}
+
+	/**
 	 * Deleted expired files from the file cache
 	 * 
 	 * @param c
