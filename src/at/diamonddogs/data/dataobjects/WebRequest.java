@@ -42,7 +42,8 @@ public class WebRequest implements Request {
 
 	private static final long serialVersionUID = 4767331321000277022L;
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(WebRequest.class.getSimpleName());
+	private static final Logger LOGGER = LoggerFactory
+			.getLogger(WebRequest.class.getSimpleName());
 
 	/**
 	 * Default constructor
@@ -160,7 +161,8 @@ public class WebRequest implements Request {
 	/**
 	 * The tempfile
 	 */
-	protected Pair<Boolean, TempFile> tmpFile = new Pair<Boolean, TempFile>(false, null);
+	protected Pair<Boolean, TempFile> tmpFile = new Pair<Boolean, TempFile>(
+			false, null);
 
 	/**
 	 * A flag to indicate if this {@link WebRequest} has been cancelled
@@ -218,7 +220,9 @@ public class WebRequest implements Request {
 
 	@SuppressWarnings("javadoc")
 	public void removeHeaderField(String field) {
-		header.remove(field);
+		if (header != null) {
+			header.remove(field);
+		}
 	}
 
 	@SuppressWarnings("javadoc")
