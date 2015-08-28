@@ -19,7 +19,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.content.Context;
-import android.os.Build;
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.data.dataobjects.WebRequest.Type;
 
@@ -59,20 +58,7 @@ public class WebClientFactory {
 	 * 
 	 */
 	public WebClient getNetworkClient(WebRequest webRequest, Context context) {
-		WebClient client = null;
-		if (isPatch(webRequest) || isPatchWithData(webRequest) || isPutWithData(webRequest) || isPostWithData(webRequest)
-			|| isDeleteWithData(webRequest)) {
-			LOGGER
-				.info("!!!WARNING!!! FORCE USING WebClientDefaultHttpClient DUE TO BUGGY IMPLEMENTATION OF HttpUrlConnection (POST / PUT / PATCH / DELETE DATA WOULD OTHERWISE BE CUT OFF)!!!");
-			client = new WebClientDefaultHttpClient(context);
-		} else if (Build.VERSION.SDK_INT > Build.VERSION_CODES.FROYO) {
-			LOGGER.debug("Using WebClientHttpURLConnection, since SDK bigger than Froyo: " + Build.VERSION.SDK_INT);
-			client = new WebClientHttpURLConnection(context);
-		} else {
-			LOGGER.debug("Using WebClientDefaultHttpClient, since SDK smaller or equal Froyo: " + Build.VERSION.SDK_INT);
-			client = new WebClientDefaultHttpClient(context);
-		}
-		return client;
+		return new WebClientDefaultHttpClient(context);
 	}
 
 	/**
