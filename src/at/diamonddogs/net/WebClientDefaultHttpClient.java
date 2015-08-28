@@ -144,7 +144,7 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 			// cacheObjectToFile
 			listenerReply = createListenerReply(webRequest, null, tr, Status.FAILED);
 			LOGGER.info("Error running webrequest: " + webRequest.getUrl() + " status: "
-				+ (response == null ? "" : response.getStatusLine().getStatusCode()), tr);
+					+ (response == null ? "" : response.getStatusLine().getStatusCode()), tr);
 		}
 		if (webClientReplyListener != null) {
 			webClientReplyListener.onWebReply(this, listenerReply);
@@ -166,6 +166,7 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 					requestBase
 				)
 			);
+			// @formatter:on
 		}
 	}
 
@@ -272,9 +273,13 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 		if (header != null) {
 			for (String field : header.keySet()) {
 				if (webRequest.isAppendHeader()) {
-					requestBase.addHeader(field, header.get(field));
+					if (!requestBase.containsHeader(field)) {
+						requestBase.addHeader(field, header.get(field));
+					}
 				} else {
-					requestBase.setHeader(field, header.get(field));
+					if (!requestBase.containsHeader(field)) {
+						requestBase.setHeader(field, header.get(field));
+					}
 				}
 			}
 		}
@@ -283,7 +288,7 @@ public class WebClientDefaultHttpClient extends WebClient implements HttpRequest
 	@Override
 	public boolean retryRequest(IOException exception, int executionCount, HttpContext context) {
 		LOGGER.error("executionCount:" + executionCount + " NumberOfRetries: " + webRequest.getNumberOfRetries() + " exception: "
-			+ exception.toString());
+				+ exception.toString());
 		if (executionCount >= webRequest.getNumberOfRetries()) {
 			return false;
 		}

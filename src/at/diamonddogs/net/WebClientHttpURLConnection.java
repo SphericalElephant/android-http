@@ -182,9 +182,13 @@ public class WebClientHttpURLConnection extends WebClient {
 		if (header != null) {
 			for (String field : header.keySet()) {
 				if (webRequest.isAppendHeader()) {
-					connection.addRequestProperty(field, header.get(field));
+					if (connection.getHeaderFields().containsKey(field)) {
+						connection.addRequestProperty(field, header.get(field));
+					}
 				} else {
-					connection.setRequestProperty(field, header.get(field));
+					if (connection.getHeaderFields().containsKey(field)) {
+						connection.setRequestProperty(field, header.get(field));
+					}
 				}
 			}
 		}
