@@ -14,3 +14,4 @@ proguard/
 *.log
 .navigation/
 captures/
+maven-repository/

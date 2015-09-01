@@ -35,3 +35,15 @@ dependencies {
     compile 'com.google.code.ksoap2-android:ksoap2-android:3.1.1'
     compile 'org.slf4j:slf4j-android:1.7.12'
 }
+
+apply plugin: 'maven'
+uploadArchives {
+    repositories.mavenDeployer {
+        repository(url: "file:maven-repository/")
+
+        pom.groupId = GROUP
+        pom.artifactId = ARTIFACT_ID
+        pom.version = VERSION
+    }
+}
+
