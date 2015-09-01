@@ -19,6 +19,19 @@ The framework is designed to send, receive, process and publish webrequests and 
     * Ordered-conditional synchronous web request API
 * Bundling and prioritization of non time critical web requests in order to save battery life
 
+## Permissions
+android.permission.WRITE_EXTERNAL_STORAGE
+android.permission.INTERNET
+android.permission.ACCESS_NETWORK_STATE
+android.permission.CHANGE_NETWORK_STATE
+
+## Provider
+at.diamonddogs.contentprovider.CacheContentProvider
+
+## Services
+at.diamonddogs.service.CacheService
+at.diamonddogs.service.net.HttpService
+
 ## Planned
 * Stream Processor
 * Service to save and repeat failed web requests
