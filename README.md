@@ -19,20 +19,7 @@ The framework is designed to send, receive, process and publish webrequests and 
     * Ordered-conditional synchronous web request API
 * Bundling and prioritization of non time critical web requests in order to save battery life
 
-## Permissions
-android.permission.WRITE_EXTERNAL_STORAGE
-android.permission.INTERNET
-android.permission.ACCESS_NETWORK_STATE
-android.permission.CHANGE_NETWORK_STATE
-
-## Provider
-at.diamonddogs.contentprovider.CacheContentProvider
-
-## Services
-at.diamonddogs.service.CacheService
-at.diamonddogs.service.net.HttpService
-
-## Planned
+## Planned Features
 * Stream Processor
 * Service to save and repeat failed web requests
 * REST assister
@@ -43,11 +30,29 @@ at.diamonddogs.service.net.HttpService
 * Automatic cookie handling
 * Parser annotations for data object to create parsers during runtime
 
+## Usage
+Clone the project and run "./gradlew uploadArchives" to store the archives to your local maven repository
+
+## Permissions
+Make sure that all permissions listed below are granted by your manifest:
+
+* android.permission.WRITE_EXTERNAL_STORAGE
+* android.permission.INTERNET
+* android.permission.ACCESS_NETWORK_STATE
+* android.permission.CHANGE_NETWORK_STATE
+
+## Provider
+* at.diamonddogs.contentprovider.CacheContentProvider
+
+## Services
+* at.diamonddogs.service.CacheService
+* at.diamonddogs.service.net.HttpService
+
 ## License
 Apache License, Version 2.0. Please refer to LICENSE and NOTICE for additional information.
 
 ## Example
-Example code illustrating a simple web request can be found in the example/ directory.
+Example code illustrating a simple web request can be found in the at https://github.com/SphericalElephant/android-http-example.
 
 ## Opensource Software used:
 - [ksoap2-android](http://code.google.com/p/ksoap2-android)
