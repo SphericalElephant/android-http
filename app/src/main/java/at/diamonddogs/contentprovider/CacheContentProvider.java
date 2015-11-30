@@ -15,20 +15,23 @@
  */
 package at.diamonddogs.contentprovider;
 
-import java.util.ArrayList;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.pm.ProviderInfo;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+
 import at.diamonddogs.data.adapter.database.DataBaseAdapterCacheInformation;
 import at.diamonddogs.data.dataobjects.CacheInformation;
 
@@ -40,7 +43,7 @@ public class CacheContentProvider extends ContentProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CacheContentProvider.class.getSimpleName());
 
-	private static String CACHECONTENTPROVIDER_AUTHORITY;
+	public static String CACHECONTENTPROVIDER_AUTHORITY;
 
 	private static final String DATABASE_NAME = "cache.db";
 
@@ -123,7 +126,7 @@ public class CacheContentProvider extends ContentProvider {
 				cursor.close();
 				return new CacheInformation[0];
 			}
-			ArrayList<CacheInformation> ret = new ArrayList<CacheInformation>(cursor.getCount());
+			ArrayList<CacheInformation> ret = new ArrayList<>(cursor.getCount());
 			while (cursor.moveToNext()) {
 				ret.add(dbaci.deserialize(cursor));
 			}
@@ -152,7 +155,7 @@ public class CacheContentProvider extends ContentProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+	public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		String hash = uri.getLastPathSegment();
 		SQLiteDatabase db = databaseHelper.getReadableDatabase();
 		Cursor c;
@@ -170,7 +173,7 @@ public class CacheContentProvider extends ContentProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public String getType(Uri uri) {
+	public String getType(@NonNull Uri uri) {
 		return null;
 	}
 
@@ -178,13 +181,13 @@ public class CacheContentProvider extends ContentProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public Uri insert(Uri uri, ContentValues values) {
+	public Uri insert(@NonNull Uri uri, ContentValues values) {
 		SQLiteDatabase db = databaseHelper.getWritableDatabase();
 		long rowId = db.insertWithOnConflict(DataBaseAdapterCacheInformation.TABLE, DataBaseAdapterCacheInformation.TABLE, values,
 				SQLiteDatabase.CONFLICT_REPLACE);
 		if (rowId > 0) {
 			Uri newUri = Uri.withAppendedPath(CONTENT_URI, "/" + rowId);
-			getContext().getContentResolver().notifyChange(newUri, null);
+			notifyChange(newUri, null);
 			return newUri;
 		}
 		throw new SQLException("Failed to insert row into " + uri);
@@ -194,7 +197,7 @@ public class CacheContentProvider extends ContentProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {
+	public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
 		String hash = uri.getLastPathSegment();
 		SQLiteDatabase db = databaseHelper.getWritableDatabase();
 		int count;
@@ -205,7 +208,7 @@ public class CacheContentProvider extends ContentProvider {
 			String[] args = { hash };
 			count = db.delete(DataBaseAdapterCacheInformation.TABLE, DataBaseAdapterCacheInformation._ID + " = ?", args);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
+		notifyChange(uri, null);
 		return count;
 	}
 
@@ -213,7 +216,7 @@ public class CacheContentProvider extends ContentProvider {
 	 * {@inheritDoc}
 	 */
 	@Override
-	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+	public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		String hash = uri.getLastPathSegment();
 		SQLiteDatabase db = databaseHelper.getWritableDatabase();
 		int count;
@@ -223,7 +226,13 @@ public class CacheContentProvider extends ContentProvider {
 			String[] args = { hash };
 			count = db.update(DataBaseAdapterCacheInformation.TABLE, values, DataBaseAdapterCacheInformation._ID + " = ?", args);
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
+		notifyChange(uri, null);
 		return count;
+	}
+
+	private void notifyChange(Uri uri, ContentObserver contentObserver) {
+		if (getContext() != null) {
+			getContext().getContentResolver().notifyChange(uri, contentObserver);
+		}
 	}
 }

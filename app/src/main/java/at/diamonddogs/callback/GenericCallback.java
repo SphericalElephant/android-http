@@ -167,14 +167,14 @@ public abstract class GenericCallback<T extends ServerReply> implements Callback
 		 * @return <code>true</code> if the server reckons that the request was
 		 *         a success, <code>false</code> otherwise
 		 */
-		public boolean isSuccess();
+		boolean isSuccess();
 
 		/**
 		 * A human readable error message created by the server
 		 * 
 		 * @return a {@link String}
 		 */
-		public String getError();
+		String getError();
 	}
 
 }

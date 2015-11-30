@@ -15,16 +15,18 @@
  */
 package at.diamonddogs.contentprovider;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import android.content.ContentProvider;
 import android.content.ContentValues;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.net.Uri;
+import android.support.annotation.NonNull;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default {@link ContentProvider} that holds common functionality
@@ -38,33 +40,33 @@ public abstract class AbstractDefaultContentProvider extends ContentProvider {
 	protected abstract String getDefaultTableName();
 
 	@Override
-	public int delete(Uri uri, String selection, String[] selectionArgs) {
+	public int delete(@NonNull Uri uri, String selection, String[] selectionArgs) {
 		SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
 		int rows = db.delete(getDefaultTableName(), selection, selectionArgs);
-		getContext().getContentResolver().notifyChange(uri, null);
+		notifyChange(uri, null);
 		return rows;
 	}
 
 	@Override
-	public Uri insert(Uri uri, ContentValues values) {
+	public Uri insert(@NonNull Uri uri, ContentValues values) {
 		SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
 		long rowId = db.insertWithOnConflict(getDefaultTableName(), null, values, SQLiteDatabase.CONFLICT_REPLACE);
 		if (rowId > 0) {
 			Uri newUri = Uri.withAppendedPath(uri, String.valueOf(rowId));
-			getContext().getContentResolver().notifyChange(newUri, null);
+			notifyChange(newUri, null);
 			return newUri;
 		}
 		throw new SQLException("Failed to insert row into " + uri);
 	}
 
 	@Override
-	public Cursor query(Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
+	public Cursor query(@NonNull Uri uri, String[] projection, String selection, String[] selectionArgs, String sortOrder) {
 		SQLiteDatabase db = getDatabaseHelper().getReadableDatabase();
 		return db.query(getDefaultTableName(), projection, selection, selectionArgs, null, null, sortOrder);
 	}
 
 	@Override
-	public int bulkInsert(Uri uri, ContentValues[] values) {
+	public int bulkInsert(@NonNull Uri uri, @NonNull ContentValues[] values) {
 		SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
 		db.beginTransaction();
 		int rows = 0;
@@ -83,21 +85,26 @@ public abstract class AbstractDefaultContentProvider extends ContentProvider {
 		} finally {
 			db.endTransaction();
 		}
-		getContext().getContentResolver().notifyChange(uri, null);
+		notifyChange(uri, null);
 		return rows;
 	}
 
 	@Override
-	public int update(Uri uri, ContentValues values, String selection, String[] selectionArgs) {
+	public int update(@NonNull Uri uri, ContentValues values, String selection, String[] selectionArgs) {
 		SQLiteDatabase db = getDatabaseHelper().getWritableDatabase();
 		int count = db.update(getDefaultTableName(), values, selection, selectionArgs);
-		getContext().getContentResolver().notifyChange(uri, null);
+		notifyChange(uri, null);
 		return count;
 	}
 
 	@Override
-	public String getType(Uri uri) {
+	public String getType(@NonNull Uri uri) {
 		return null;
 	}
 
+	private void notifyChange(Uri uri, ContentObserver contentObserver) {
+		if (getContext() != null) {
+			getContext().getContentResolver().notifyChange(uri, contentObserver);
+		}
+	}
 }
