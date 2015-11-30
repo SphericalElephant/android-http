@@ -26,5 +26,5 @@ import at.diamonddogs.data.dataobjects.WebRequest;
  *            the type of {@link WebRequest}
  */
 public interface WebRequestAdapter<REQUEST extends WebRequest> {
-	public REQUEST getRequest();
+	REQUEST getRequest();
 }

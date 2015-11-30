@@ -26,6 +26,6 @@ public interface UiAnnotationProcessor {
 	 * @param o
 	 *            the {@link Object} to be processed
 	 */
-	public void process(Object o);
+	 void process(Object o);
 
 }

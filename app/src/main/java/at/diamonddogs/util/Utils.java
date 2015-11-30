@@ -54,30 +54,6 @@ public class Utils {
 	private static final Logger LOGGER = LoggerFactory.getLogger(Utils.class.getSimpleName());
 
 	/**
-	 * Returns an array
-	 * 
-	 * @deprecated do not use this method, the implementation doesn't make a lot
-	 *             of sense and furthermore, the whole method is somewhat
-	 *             pointless.
-	 * @param <T>
-	 *            generic type of the items to place into an array
-	 * @param clazz
-	 *            the class of generic type <T>
-	 * @param values
-	 *            an arbitrary number of values
-	 * @return an array containing all values passed to this method
-	 */
-	@Deprecated
-	public static <T> T[] asArray(Class<T> clazz, T... values) {
-		@SuppressWarnings("unchecked")
-		T[] array = (T[]) Array.newInstance(clazz, values.length);
-		for (int i = 0; i < values.length; i++) {
-			array[i] = values[i];
-		}
-		return array;
-	}
-
-	/**
 	 * Checks if a {@link Collection} is not <code>null</code> and not empty
 	 * 
 	 * @param collection
@@ -137,7 +113,7 @@ public class Utils {
 	 * @return a {@link String} {@link List}
 	 */
 	public static List<String> convertColumnToList(Cursor cursor, String name) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 		if (!checkCursor(cursor)) {
 			return null;
 		}
@@ -353,7 +329,7 @@ public class Utils {
 	 * @param second
 	 * @return a {@link Calendar}r with the provided date
 	 */
-	public static final Calendar getScheduledDate(int dayOfWeek, int hourOfDay, int minute, int second) {
+	public static Calendar getScheduledDate(int dayOfWeek, int hourOfDay, int minute, int second) {
 		Calendar c = Calendar.getInstance();
 		int weekDay = c.get(Calendar.DAY_OF_WEEK);
 		int days = dayOfWeek - weekDay;
@@ -374,15 +350,13 @@ public class Utils {
 	 * @param c
 	 *            a {@link Context}
 	 */
-	public static final void commitCarefulSuicide(Context c) {
+	public static void commitCarefulSuicide(Context c) {
 		try {
 			if (!new ForegroundCheckTask().execute(c).get()) {
 				android.os.Process.killProcess(android.os.Process.myPid());
 			}
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		} catch (ExecutionException e) {
-			e.printStackTrace();
+		} catch (Throwable tr) {
+			LOGGER.error("Error while commiting careful suicide", tr);
 		}
 	}
 
@@ -392,7 +366,7 @@ public class Utils {
 	 * 
 	 * @param context
 	 */
-	public static final void commitCarefulSuicideThreaded(final Context context) {
+	public static void commitCarefulSuicideThreaded(final Context context) {
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -421,7 +395,7 @@ public class Utils {
 	/**
 	 * Kills the process without asking questions
 	 */
-	public static final void commitSuicide() {
+	public static void commitSuicide() {
 		android.os.Process.killProcess(android.os.Process.myPid());
 	}
 
@@ -438,7 +412,7 @@ public class Utils {
 	 * @throws FileNotFoundException
 	 *             if the image file could not be found
 	 */
-	public static final Bitmap getBitmapFromUri(Context c, Uri uri, int inSampleSize) throws FileNotFoundException {
+	public static Bitmap getBitmapFromUri(Context c, Uri uri, int inSampleSize) throws FileNotFoundException {
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inSampleSize = inSampleSize;
 		return BitmapFactory.decodeStream(c.getContentResolver().openInputStream(uri), null, options);
@@ -455,7 +429,7 @@ public class Utils {
 	 * @throws FileNotFoundException
 	 *             if the image file could not be found
 	 */
-	public static final Bitmap getBitmapFromUri(Context c, String uri) throws FileNotFoundException {
+	public static Bitmap getBitmapFromUri(Context c, String uri) throws FileNotFoundException {
 		return BitmapFactory.decodeStream(c.getContentResolver().openInputStream(Uri.parse(uri)));
 	}
 

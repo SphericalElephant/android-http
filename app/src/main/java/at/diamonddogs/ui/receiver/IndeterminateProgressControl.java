@@ -25,12 +25,12 @@ public interface IndeterminateProgressControl extends UiAnnotationProcessable {
 	/**
 	 * Shows the indeterminate progress
 	 */
-	public void showIndeterminateProgress();
+	void showIndeterminateProgress();
 
 	/**
 	 * Hides the indeterminate progress
 	 */
-	public void hideIndeterminateProgress();
+	void hideIndeterminateProgress();
 
 	/**
 	 * Returns the current state of indeterminate progress
@@ -38,5 +38,5 @@ public interface IndeterminateProgressControl extends UiAnnotationProcessable {
 	 * @return <code>true</code> if the progress is showing, <code>false</code>
 	 *         otherwise
 	 */
-	public boolean isIndeterminateProgressShowing();
+	boolean isIndeterminateProgressShowing();
 }

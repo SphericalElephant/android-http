@@ -31,6 +31,6 @@ public interface UiAnnotationProcessable {
 	 *            the {@link UiAnnotationProcessor} to be used when processing
 	 *            the ui
 	 */
-	public void processUiAnnotations(UiAnnotationProcessor processor) throws IllegalAccessException,
+	 void processUiAnnotations(UiAnnotationProcessor processor) throws IllegalAccessException,
 		IllegalArgumentException;
 }

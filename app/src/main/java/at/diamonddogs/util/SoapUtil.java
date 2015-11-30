@@ -37,7 +37,7 @@ public class SoapUtil {
 	 * @param e
 	 *            the envelope to print
 	 */
-	public static final void printSoapEnvelopeToStderr(SoapEnvelope e) {
+	public static void printSoapEnvelopeToStderr(SoapEnvelope e) {
 		printSoapEnvelope(e, new PrintWriter(System.err));
 	}
 
@@ -47,7 +47,7 @@ public class SoapUtil {
 	 * @param e
 	 *            the envelope to print
 	 */
-	public static final void printSoapEnvelopeToStdout(SoapEnvelope e) {
+	public static void printSoapEnvelopeToStdout(SoapEnvelope e) {
 		printSoapEnvelope(e, new PrintWriter(System.out));
 	}
 
@@ -60,7 +60,7 @@ public class SoapUtil {
 	 * @param w
 	 *            the write to print the envelope to
 	 */
-	public static final void printSoapEnvelope(SoapEnvelope e, Writer w) {
+	public static void printSoapEnvelope(SoapEnvelope e, Writer w) {
 		try {
 			XmlSerializer x = XmlPullParserFactory.newInstance().newSerializer();
 			x.setOutput(w);

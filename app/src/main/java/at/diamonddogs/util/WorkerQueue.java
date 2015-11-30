@@ -15,14 +15,16 @@
  */
 package at.diamonddogs.util;
 
+import android.support.annotation.Nullable;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A simple worker queue
@@ -45,7 +47,7 @@ public class WorkerQueue {
 	 *            the keep alive time in ms
 	 */
 	public WorkerQueue(int corePoolSize, int maxPoolSize, long keepAliveTimeMs) {
-		outstandingRequests = new LinkedBlockingQueue<Runnable>();
+		outstandingRequests = new LinkedBlockingQueue<>();
 		threadPoolExecuter = new ThreadPoolExecutor(corePoolSize, maxPoolSize, keepAliveTimeMs, TimeUnit.MILLISECONDS, outstandingRequests);
 	}
 
@@ -58,11 +60,10 @@ public class WorkerQueue {
 	 *            {@link Future}
 	 * @param task
 	 *            the task to cancel
-	 * @return returns the {@link Future} of the task that has been canceled or
-	 *         <code>null</code> if the executer was shutdown
-	 * 
-	 * @return
+	 *
+	 * @return a {@link Future} task or <code>null</code> if the {@link ThreadPoolExecutor} has been shut down
 	 */
+	@Nullable
 	public <T> Future<T> runCancelableTask(Callable<T> task) {
 		if (!threadPoolExecuter.isShutdown()) {
 			return threadPoolExecuter.submit(task);

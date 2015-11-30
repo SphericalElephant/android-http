@@ -26,7 +26,7 @@ import at.diamonddogs.util.CacheManager.CacheAlarmReceiver;
  */
 public class CleanCacheAsyncTask extends AsyncTask<Context, Void, Void> {
 
-	public static final void runClean(Context c) {
+	public static void runClean(Context c) {
 		CleanCacheAsyncTask t = new CleanCacheAsyncTask();
 		t.execute(c.getApplicationContext());
 	}

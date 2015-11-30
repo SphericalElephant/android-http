@@ -72,7 +72,7 @@ public class CacheManager {
 	private LruCache<String, CacheItem> cache;
 
 	private CacheManager() {
-		cache = new LruCache<String, CacheManager.CacheItem>(CACHE_SIZE_MAX_ENTRIES);
+		cache = new LruCache<>(CACHE_SIZE_MAX_ENTRIES);
 	}
 
 	/**
@@ -346,8 +346,7 @@ public class CacheManager {
 	private PendingIntent getAlarmIntent(Context context) {
 		Intent intent = new Intent(context.getApplicationContext(), CacheAlarmReceiver.class);
 		intent.setAction(ACTION_INTENT_SCHEDULE_CACHE);
-		PendingIntent pi = PendingIntent.getBroadcast(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-		return pi;
+		return PendingIntent.getBroadcast(context.getApplicationContext(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 	}
 
 	/**

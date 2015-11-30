@@ -96,7 +96,7 @@ public class ConnectivityHelper {
 			return true;
 		}
 		NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-		return networkInfo == null ? false : networkInfo.isConnected();
+		return networkInfo != null && networkInfo.isConnected();
 	}
 
 	private boolean isPingAble(WebRequest wr) {

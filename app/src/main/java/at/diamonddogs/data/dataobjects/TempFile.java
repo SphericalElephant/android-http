@@ -17,7 +17,7 @@ package at.diamonddogs.data.dataobjects;
 
 
 /**
- * Represents a temorary file
+ * Represents a temporary file
  */
 public class TempFile {
 
