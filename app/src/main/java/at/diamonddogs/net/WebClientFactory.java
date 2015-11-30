@@ -58,7 +58,7 @@ public class WebClientFactory {
 	 * 
 	 */
 	public WebClient getNetworkClient(WebRequest webRequest, Context context) {
-		return new WebClientDefaultHttpClient(context);
+		return new WebClientHttpURLConnection(context);
 	}
 
 	/**

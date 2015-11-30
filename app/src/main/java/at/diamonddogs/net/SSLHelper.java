@@ -31,9 +31,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.http.conn.scheme.PlainSocketFactory;
-import org.apache.http.conn.scheme.Scheme;
-import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -53,7 +50,6 @@ public class SSLHelper {
 
 	/**
 	 * Stores the SSL factory for the apache {@link WebClient} ->
-	 * {@link WebClientDefaultHttpClient}
 	 */
 	public SSLSocketFactory SSL_FACTORY_APACHE = null;
 
@@ -82,55 +78,6 @@ public class SSLHelper {
 			return INSTANCE;
 
 		}
-	}
-
-	/**
-	 * Register a keystore with SSL (APACHE)
-	 * 
-	 * @param c
-	 *            a {@link Context}
-	 * @param resourceId
-	 *            the resource id of the keystore
-	 * @param password
-	 *            the password of the keystore
-	 * @return true on success, false otherwise
-	 */
-	public boolean initSSLFactoryApache(Context c, int resourceId, String password) {
-		try {
-			if (c == null || resourceId == -1 || password == null) {
-				LOGGER.info("No keystore specified, using alltrust");
-				makeAllTrustManagerForApache();
-				return true;
-			} else {
-				KeyStore store = getKeyStore(c, resourceId, password);
-				SchemeRegistry schemeRegistry = new SchemeRegistry();
-				schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
-				SSL_FACTORY_APACHE = new SSLSocketFactory(store);
-				schemeRegistry.register(new Scheme("https", SSL_FACTORY_APACHE, 443));
-				sslState.trustAll = false;
-				return true;
-			}
-		} catch (Throwable tr) {
-			LOGGER.warn("Error initializing SSLFactoryApache, trusting all certs", tr);
-			try {
-				makeAllTrustManagerForApache();
-				sslState.tr = tr;
-				return true;
-			} catch (Throwable tr1) {
-				sslState.tr1 = tr1;
-				sslState.sslOk = false;
-				LOGGER.warn("Error trusting all certs, no ssl connection possible", tr);
-			}
-			return false;
-		}
-	}
-
-	private void makeAllTrustManagerForApache() throws KeyStoreException, NoSuchAlgorithmException, CertificateException, IOException,
-			KeyManagementException, UnrecoverableKeyException {
-		KeyStore store;
-		store = KeyStore.getInstance(KeyStore.getDefaultType());
-		store.load(null, null);
-		SSL_FACTORY_APACHE = new AllTrustingApacheSSLFactory(null);
 	}
 
 	/**
