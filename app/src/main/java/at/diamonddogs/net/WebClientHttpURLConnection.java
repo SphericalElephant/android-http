@@ -59,7 +59,7 @@ public class WebClientHttpURLConnection extends WebClient {
 	 * @param context
 	 *            a {@link Context} object
 	 */
-	public WebClientHttpURLConnection(Context context) {
+	WebClientHttpURLConnection(Context context) {
 		super(context);
 		SSLSocketFactory sslSocketFactory = SSLHelper.getInstance().SSL_FACTORY_JAVA;
 		if (sslSocketFactory == null) {
@@ -132,10 +132,7 @@ public class WebClientHttpURLConnection extends WebClient {
 		if (!followProtocolRedirect || !webRequest.isFollowRedirects()) {
 			return false;
 		}
-		if (wr.getHttpStatusCode() == HTTPStatus.HTTP_MOVED_TEMP || wr.getHttpStatusCode() == HTTPStatus.HTTP_MOVED_PERM) {
-			return true;
-		}
-		return false;
+		return wr.getHttpStatusCode() == HTTPStatus.HTTP_MOVED_TEMP || wr.getHttpStatusCode() == HTTPStatus.HTTP_MOVED_PERM;
 	}
 
 	private void configureConnection() throws ProtocolException {
@@ -166,6 +163,7 @@ public class WebClientHttpURLConnection extends WebClient {
 		case DELETE:
 			// TODO: does not support setDoOutput(true)
 			connection.setRequestMethod("DELETE");
+			//connection.setDoOutput(true);
 			break;
 		case GET:
 			connection.setRequestMethod("GET");
@@ -173,6 +171,8 @@ public class WebClientHttpURLConnection extends WebClient {
 		case HEAD:
 			connection.setRequestMethod("HEAD");
 			break;
+		default:
+			throw new UnsupportedOperationException("Request Type not supported " + webRequest.getRequestType());
 		}
 	}
 
@@ -208,7 +208,7 @@ public class WebClientHttpURLConnection extends WebClient {
 
 		int statusCode = connection.getResponseCode();
 
-		WebReply reply = null;
+		WebReply reply;
 
 		switch (statusCode) {
 		case HttpURLConnection.HTTP_PARTIAL:
@@ -234,7 +234,6 @@ public class WebClientHttpURLConnection extends WebClient {
 			} else {
 				reply = handleResponseNotOk(null, statusCode, connection.getHeaderFields());
 			}
-
 			break;
 		}
 

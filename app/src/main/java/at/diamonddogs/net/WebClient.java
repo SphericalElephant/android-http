@@ -145,7 +145,7 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 			fos.close();
 
 			if (webRequest.isCancelled()) {
-				LOGGER.info("delete file due to canclled download: " + file.getName());
+				LOGGER.info("delete file due to cancelled download: " + file.getName());
 				file.delete();
 			} else {
 
@@ -213,7 +213,6 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 			baos.close();
 		} catch (Exception e) {
 		}
-
 		try {
 			toRead.close();
 		} catch (Exception e) {
@@ -311,7 +310,7 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 		 * @param reply
 		 *            the {@link ReplyAdapter} created by the {@link WebClient}
 		 */
-		public void onWebReply(WebClient webClient, ReplyAdapter reply);
+		void onWebReply(WebClient webClient, ReplyAdapter reply);
 	}
 
 	/**
@@ -325,7 +324,7 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 		 * @param size
 		 *            the size in byte
 		 */
-		public void downloadSize(long size);
+		void downloadSize(long size);
 
 		/**
 		 * Informs listeners about the bytes read
@@ -333,7 +332,7 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 		 * @param progress
 		 *            bytes read
 		 */
-		public void downloadProgress(long progress);
+		void downloadProgress(long progress);
 	}
 
 	/**

@@ -102,7 +102,7 @@ public class HttpServiceAssister {
 	private final Queue<WebRequestInformation> pendingWebRequests;
 
 	/**
-	 * This flag is set by {@link HttpServiceAssister#savlyUnbindService()}. It
+	 * This flag is set by {@link HttpServiceAssister#safelyUnbindService()}. It
 	 * ensures that pending {@link WebRequest} will be executed prior to
 	 * unbinding the {@link HttpService}
 	 */
@@ -134,7 +134,7 @@ public class HttpServiceAssister {
 	 */
 	public HttpServiceAssister(Context context) {
 		this.context = context;
-		this.pendingWebRequests = new LinkedList<WebRequestInformation>();
+		this.pendingWebRequests = new LinkedList<>();
 		this.nonTimeCriticalTaskManager = new NonTimeCriticalTaskManager(
 			new NonTimeCriticalTaskQueueConfigurationDefaultFactory().newInstance(), this);
 	}
@@ -150,7 +150,7 @@ public class HttpServiceAssister {
 	 */
 	public HttpServiceAssister(Context context, NonTimeCriticalTaskQueueConfigurationFactory factory) {
 		this.context = context;
-		this.pendingWebRequests = new LinkedList<WebRequestInformation>();
+		this.pendingWebRequests = new LinkedList<>();
 		this.nonTimeCriticalTaskManager = new NonTimeCriticalTaskManager(factory.newInstance(), this);
 	}
 
@@ -202,8 +202,9 @@ public class HttpServiceAssister {
 	/**
 	 * Unbinds the {@link HttpService}. Pending {@link WebRequest}s will be
 	 * executed before unbinding.
-	 * 
-	 * @return
+	 *
+	 * @return <code>true</code> if the service connection was available and could be used to unbind
+	 * <code>false otherwise</code>
 	 */
 	public boolean safelyUnbindService() {
 		synchronousWebRequestPossible.set(false);
@@ -375,7 +376,7 @@ public class HttpServiceAssister {
 	 * @param serviceProcessor
 	 *            the processor that handles the {@link WebRequest}
 	 * @return The object created by the
-	 *         {@link DataProcessor#obtainDataObjectFromWebReply(ReplyAdapter)}
+	 *         {@link DataProcessor#obtainDataObjectFromWebReply(Context, ReplyAdapter)}
 	 *         method of the {@link DataProcessor} registered for this request,
 	 *         or <code>null</code> if the request failed.
 	 */
@@ -405,7 +406,7 @@ public class HttpServiceAssister {
 	 * @param serviceProcessor
 	 *            the processor that handles the {@link WebRequest}
 	 * @return The object created by the
-	 *         {@link DataProcessor#obtainDataObjectFromWebReply(ReplyAdapter)}
+	 *         {@link DataProcessor#obtainDataObjectFromWebReply(Context, ReplyAdapter)}
 	 *         method of the {@link DataProcessor} registered for this request,
 	 *         or <code>null</code> if the request failed.
 	 */
@@ -434,7 +435,7 @@ public class HttpServiceAssister {
 	 * @param serviceProcessor
 	 *            the processor that handles the {@link WebRequest}s
 	 * @return The object created by the
-	 *         {@link DataProcessor#obtainDataObjectFromWebReply(ReplyAdapter)}
+	 *         {@link DataProcessor#obtainDataObjectFromWebReply(Context, ReplyAdapter)}
 	 *         method of the {@link DataProcessor} registered for this request,
 	 *         or <code>null</code> if the request failed.
 	 */
@@ -461,11 +462,11 @@ public class HttpServiceAssister {
 	 *            an array of {@link WebRequest}s to run
 	 * @param serviceProcessor
 	 *            the processor that handles the {@link WebRequest}s
-	 * @param downloadProgressListener
+	 * @param progressListener
 	 *            a progress listener that will be used for all
 	 *            {@link WebRequest}s
 	 * @return The object created by the
-	 *         {@link DataProcessor#obtainDataObjectFromWebReply(ReplyAdapter)}
+	 *         {@link DataProcessor#obtainDataObjectFromWebReply(Context, ReplyAdapter)}
 	 *         method of the {@link DataProcessor} registered for this request,
 	 *         or <code>null</code> if the request failed.
 	 */
@@ -493,11 +494,11 @@ public class HttpServiceAssister {
 	 *            an array of {@link WebRequest}s to run
 	 * @param serviceProcessor
 	 *            the processor that handles the {@link WebRequest}s
-	 * @param downloadProgressListener
+	 * @param progressListeners
 	 *            an array of {@link DownloadProgressListener} that will be used
 	 *            for the corresponding {@link WebRequest}
 	 * @return The object created by the
-	 *         {@link DataProcessor#obtainDataObjectFromWebReply(ReplyAdapter)}
+	 *         {@link DataProcessor#obtainDataObjectFromWebReply(Context, ReplyAdapter)}
 	 *         method of the {@link DataProcessor} registered for this request,
 	 *         or <code>null</code> if the request failed.
 	 */
@@ -589,10 +590,10 @@ public class HttpServiceAssister {
 	 * Adds an asynchronous {@link WebRequest} to the
 	 * {@link HttpServiceAssister#pendingWebRequests} {@link Queue}.
 	 * 
-	 * @param handler
-	 * @param webRequest
-	 * @param progressListener
-	 * @param serviceProcessor
+	 * @param handler the handler
+	 * @param webRequest the webrequest
+	 * @param progressListener the progressListener
+	 * @param serviceProcessor the serviceProcessor
 	 */
 	private void addWebRequestToQueue(Handler handler, WebRequest webRequest, DownloadProgressListener progressListener,
 		ServiceProcessor<?> serviceProcessor) {
