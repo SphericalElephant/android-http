@@ -60,6 +60,6 @@ public class WebClientFactory {
 	 * 
 	 */
 	public WebClient getNetworkClient(WebRequest webRequest, Context context) {
-		return new WebClientHttpURLConnection(context.getApplicationContext());
+		return new WebClientDefaultHttpClient(context);
 	}
 }

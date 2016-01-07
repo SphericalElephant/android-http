@@ -167,12 +167,7 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 				fos.close();
 			}
 			LOGGER.error("Failed download", e);
-			// Please do not do that - that hides the original error!
-			throw new IOException(e.getMessage());
-
-			// Who ever changed this... new IOException(e) is API level 9!!! and
-			// gives a nice NoSuchMethodException :)
-			// throw new IOException(e);
+			throw new IOException(e);
 		}
 	}
 
@@ -311,7 +306,7 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 		 * @param reply
 		 *            the {@link ReplyAdapter} created by the {@link WebClient}
 		 */
-		public void onWebReply(WebClient webClient, ReplyAdapter reply);
+		void onWebReply(WebClient webClient, ReplyAdapter reply);
 	}
 
 	/**
@@ -325,7 +320,7 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 		 * @param size
 		 *            the size in byte
 		 */
-		public void downloadSize(long size);
+		void downloadSize(long size);
 
 		/**
 		 * Informs listeners about the bytes read
@@ -333,7 +328,7 @@ public abstract class WebClient implements Callable<ReplyAdapter> {
 		 * @param progress
 		 *            bytes read
 		 */
-		public void downloadProgress(long progress);
+		void downloadProgress(long progress);
 	}
 
 	/**

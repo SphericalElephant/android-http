@@ -15,19 +15,20 @@
  */
 package at.diamonddogs.net;
 
+import android.content.Context;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.HttpURLConnection;
 import java.net.ProtocolException;
-import java.net.URL;
 import java.util.Map;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.net.ssl.SSLSocketFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import android.content.Context;
 import at.diamonddogs.data.adapter.ReplyAdapter;
 import at.diamonddogs.data.adapter.ReplyAdapter.Status;
 import at.diamonddogs.data.dataobjects.Authentication;
@@ -55,9 +56,8 @@ public class WebClientHttpURLConnection extends WebClient {
 
 	/**
 	 * Default {@link WebClient} constructor
-	 * 
-	 * @param context
-	 *            a {@link Context} object
+	 *
+	 * @param context a {@link Context} object
 	 */
 	public WebClientHttpURLConnection(Context context) {
 		super(context);
@@ -70,53 +70,42 @@ public class WebClientHttpURLConnection extends WebClient {
 	}
 
 	@Override
-	public ReplyAdapter call() {
+	public synchronized ReplyAdapter call() {
 
 		ReplyAdapter listenerReply = null;
 		if (webRequest == null) {
 			throw new WebClientException("WebRequest must not be null!");
 		}
 		retryCount = webRequest.getNumberOfRetries();
+		boolean abortLoop = false;
 		do {
 			try {
-				retryCount--;
 				WebReply reply;
 
 				connection = (HttpURLConnection) webRequest.getUrl().openConnection();
 				configureConnection();
 				reply = runRequest();
 
-				if (needsFollowRedirect(reply)) {
-					String url = getRedirectUrl(reply);
-					LOGGER.debug("following redirect manually to new url: " + url);
-					connection = (HttpURLConnection) new URL(url).openConnection();
-					configureConnection();
-					reply = runRequest();
-				}
-
 				listenerReply = createListenerReply(webRequest, reply, null, Status.OK);
 
-				int status = ((WebReply) listenerReply.getReply()).getHttpStatusCode();
-				if (!(status == -1)) {
-					retryCount = -1;
-				}
+				abortLoop = true;
 			} catch (Throwable tr) {
 
-				if (retryCount != 0) {
+				if (retryCount >= 0) {
 					try {
 						Thread.sleep(webRequest.getRetryInterval());
 					} catch (InterruptedException e) {
-						LOGGER.error("Error in WebRequest: " + webRequest, e);
+						LOGGER.error("WebRequest thread interrupted: " + webRequest, e);
 					}
 				}
 				listenerReply = createListenerReply(webRequest, null, tr, Status.FAILED);
-				LOGGER.info("Error running webrequest: " + webRequest.getUrl(), tr);
+				LOGGER.info("Error running WebRequest: " + webRequest.getUrl() + " " + webRequest.getId(), tr);
+
+				retryCount--;
 			} finally {
-				if (connection != null) {
-					connection.disconnect();
-				}
+				closeConnection();
 			}
-		} while (retryCount >= 0);
+		} while (retryCount >= 0 && !abortLoop);
 
 		if (webClientReplyListener != null) {
 			webClientReplyListener.onWebReply(this, listenerReply);
@@ -124,55 +113,49 @@ public class WebClientHttpURLConnection extends WebClient {
 		return listenerReply;
 	}
 
-	private String getRedirectUrl(WebReply wr) {
-		return wr.getReplyHeader().get("location").get(0);
-	}
-
-	private boolean needsFollowRedirect(WebReply wr) {
-		if (!followProtocolRedirect || !webRequest.isFollowRedirects()) {
-			return false;
+	private void closeConnection() {
+		if (connection != null) {
+			connection.disconnect();
+			connection = null;
 		}
-		if (wr.getHttpStatusCode() == HTTPStatus.HTTP_MOVED_TEMP || wr.getHttpStatusCode() == HTTPStatus.HTTP_MOVED_PERM) {
-			return true;
-		}
-		return false;
 	}
 
 	private void configureConnection() throws ProtocolException {
+		buildHeader();
+		setAuthHeader();
+		setRequestType();
+
+		connection.setInstanceFollowRedirects(webRequest.isFollowRedirects());
 		connection.setReadTimeout(webRequest.getReadTimeout());
 		connection.setConnectTimeout(webRequest.getConnectionTimeout());
 		connection.setInstanceFollowRedirects(webRequest.isFollowRedirects());
-
-		setRequestType();
-		buildHeader();
-		setAuthHeader();
 	}
 
 	private void setRequestType() throws ProtocolException {
 		switch (webRequest.getRequestType()) {
-		case POST:
-			connection.setRequestMethod("POST");
-			connection.setDoOutput(true);
-			break;
-		case PUT:
-			connection.setRequestMethod("PUT");
-			connection.setDoOutput(true);
-			break;
-		case PATCH:
-			// TODO: patch is not supported by HttpUrlConnection!
-			connection.setRequestMethod("PATCH");
-			connection.setDoOutput(true);
-			break;
-		case DELETE:
-			// TODO: does not support setDoOutput(true)
-			connection.setRequestMethod("DELETE");
-			break;
-		case GET:
-			connection.setRequestMethod("GET");
-			break;
-		case HEAD:
-			connection.setRequestMethod("HEAD");
-			break;
+			case POST:
+				connection.setRequestMethod("POST");
+				connection.setDoOutput(true);
+				break;
+			case PUT:
+				connection.setRequestMethod("PUT");
+				connection.setDoOutput(true);
+				break;
+			case PATCH:
+				// TODO: patch is not supported by HttpUrlConnection!
+				connection.setRequestMethod("PATCH");
+				connection.setDoOutput(true);
+				break;
+			case DELETE:
+				// TODO: does not support setDoOutput(true)
+				connection.setRequestMethod("DELETE");
+				break;
+			case GET:
+				connection.setRequestMethod("GET");
+				break;
+			case HEAD:
+				connection.setRequestMethod("HEAD");
+				break;
 		}
 	}
 
@@ -204,38 +187,37 @@ public class WebClientHttpURLConnection extends WebClient {
 
 	private WebReply runRequest() throws IOException {
 
-		configureConnection();
-
 		int statusCode = connection.getResponseCode();
 
-		WebReply reply = null;
+		WebReply reply;
 
 		switch (statusCode) {
-		case HttpURLConnection.HTTP_PARTIAL:
-		case HttpURLConnection.HTTP_OK:
-			LOGGER.debug("WebRequest OK: " + webRequest);
-			publishFileSize(connection.getContentLength());
-			reply = handleResponseOk(connection.getInputStream(), statusCode, connection.getHeaderFields());
-			break;
-		case HttpURLConnection.HTTP_NO_CONTENT:
-			reply = handleResponseOk(null, statusCode, connection.getHeaderFields());
-		case HttpURLConnection.HTTP_NOT_MODIFIED:
-			reply = handleResponseNotModified(statusCode, connection.getHeaderFields());
-			break;
-		default:
-			LOGGER.debug("WebRequest DEFAULT: " + webRequest + " status code: " + statusCode);
-			if (connection != null) {
-				try {
-					reply = handleResponseNotOk(connection.getInputStream(), statusCode, connection.getHeaderFields());
-				} catch (Throwable tr) {
-					LOGGER.debug("Error reading input stream, trying error stream!");
-					reply = handleResponseNotOk(connection.getErrorStream(), statusCode, connection.getHeaderFields());
+			case HttpURLConnection.HTTP_PARTIAL:
+			case HttpURLConnection.HTTP_OK:
+				LOGGER.debug("WebRequest OK: " + webRequest);
+				publishFileSize(connection.getContentLength());
+				reply = handleResponseOk(connection.getInputStream(), statusCode, connection.getHeaderFields());
+				break;
+			case HttpURLConnection.HTTP_NO_CONTENT:
+				reply = handleResponseOk(null, statusCode, connection.getHeaderFields());
+				break;
+			case HttpURLConnection.HTTP_NOT_MODIFIED:
+				reply = handleResponseNotModified(statusCode, connection.getHeaderFields());
+				break;
+			default:
+				LOGGER.debug("WebRequest DEFAULT: " + webRequest + " status code: " + statusCode);
+				if (connection != null) {
+					try {
+						reply = handleResponseNotOk(connection.getInputStream(), statusCode, connection.getHeaderFields());
+					} catch (Throwable tr) {
+						LOGGER.debug("Error reading input stream, trying error stream!");
+						reply = handleResponseNotOk(connection.getErrorStream(), statusCode, connection.getHeaderFields());
+					}
+				} else {
+					reply = handleResponseNotOk(null, statusCode, connection.getHeaderFields());
 				}
-			} else {
-				reply = handleResponseNotOk(null, statusCode, connection.getHeaderFields());
-			}
 
-			break;
+				break;
 		}
 
 		return reply;
