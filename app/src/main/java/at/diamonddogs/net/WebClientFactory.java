@@ -19,6 +19,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import android.content.Context;
+import android.os.Build;
+
 import at.diamonddogs.data.dataobjects.WebRequest;
 import at.diamonddogs.data.dataobjects.WebRequest.Type;
 
@@ -58,61 +60,6 @@ public class WebClientFactory {
 	 * 
 	 */
 	public WebClient getNetworkClient(WebRequest webRequest, Context context) {
-		return new WebClientDefaultHttpClient(context);
-	}
-
-	/**
-	 * Checks if the {@link WebRequest} has POST data
-	 * 
-	 * @param wr
-	 *            the {@link WebRequest} to check
-	 * @return true or false, depending on the presence of POST data
-	 */
-	public boolean isPostWithData(WebRequest wr) {
-		return wr.getRequestType() == Type.POST && wr.getHttpEntity() != null;
-	}
-
-	/**
-	 * Checks if the {@link WebRequest} has PUT data
-	 * 
-	 * @param wr
-	 *            the {@link WebRequest} to check
-	 * @return true or false, depending on the presence of PUT data
-	 */
-	public boolean isPutWithData(WebRequest wr) {
-		return wr.getRequestType() == Type.PUT && wr.getHttpEntity() != null;
-	}
-
-	/**
-	 * Checks if the {@link WebRequest} has patch data
-	 * 
-	 * @param wr
-	 *            the {@link WebRequest} to check
-	 * @return true or false, depending on the presence of PATCH data
-	 */
-	public boolean isPatchWithData(WebRequest wr) {
-		return wr.getRequestType() == Type.PATCH && wr.getHttpEntity() != null;
-	}
-
-	/**
-	 * Checks if the {@link WebRequest} is a PATCH request
-	 * 
-	 * @param wr
-	 *            the {@link WebRequest} to check
-	 * @return true or false, depending on the presence of PATCH
-	 */
-	public boolean isPatch(WebRequest wr) {
-		return wr.getRequestType() == Type.PATCH;
-	}
-
-	/**
-	 * Checks if the {@link WebRequest} has DELETE data
-	 * 
-	 * @param wr
-	 *            the {@link WebRequest} to check
-	 * @return true or false, depending on the presence of DELETE data
-	 */
-	public boolean isDeleteWithData(WebRequest wr) {
-		return wr.getRequestType() == Type.DELETE && wr.getHttpEntity() != null;
+		return new WebClientHttpURLConnection(context.getApplicationContext());
 	}
 }
