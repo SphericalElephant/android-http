@@ -23,12 +23,12 @@ android {
 
 repositories {
     mavenCentral()
-    maven { url 'http://ksoap2-android.googlecode.com/svn/m2-repo' }
+    maven { url 'https://oss.sonatype.org/content/repositories/ksoap2-android-releases/' }
 }
 
 dependencies {
     compile 'com.android.support:support-v4:23.0.0'
-    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.google.code.gson:gson:2.4'
     compile 'org.apache.httpcomponents:httpmime:4.2.5'
     compile 'org.apache.httpcomponents:httpcore:4.4.1'
     compile 'com.google.code.ksoap2-android:ksoap2-android:3.1.1'
